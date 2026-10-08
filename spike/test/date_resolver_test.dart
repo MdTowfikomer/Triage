@@ -26,6 +26,9 @@ void main() {
       'tomorrow 23:59': DateTime.utc(2026, 10, 8, 23, 59),
       '  TOMORROW\tAT\n3PM!  ': DateTime.utc(2026, 10, 8, 15),
       'tomorrow\u00a03\u202fp.m.': DateTime.utc(2026, 10, 8, 15),
+      'tomorrow at three pm': DateTime.utc(2026, 10, 8, 15),
+      'tomorrow at three p.m.': DateTime.utc(2026, 10, 8, 15),
+      'tomorrow three pm': DateTime.utc(2026, 10, 8, 15),
     };
     for (final entry in cases.entries) {
       test(entry.key, () {

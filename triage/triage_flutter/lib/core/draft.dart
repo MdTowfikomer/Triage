@@ -196,12 +196,20 @@ List<Draft> parseVoiceResult(Map<String, dynamic> result, DateTime reference) {
           numericScore <= 1
       ? numericScore
       : null;
-  final calls = parsed['function_calls'] is List
-      ? parsed['function_calls'] as List
+  var calls = parsed['function_calls'] is List
+      ? (parsed['function_calls'] as List)
       : [];
-  // Suppressed calls are deliberately ignored; never promote them to actions.
+  var isSuppressed = false;
+  if (calls.isEmpty &&
+      parsed['suppressed_calls'] is List &&
+      (parsed['suppressed_calls'] as List).isNotEmpty) {
+    calls = parsed['suppressed_calls'] as List;
+    isSuppressed = true;
+  }
   var reason = '';
-  if (calls.isEmpty || transcript.trim().isEmpty) {
+  if (isSuppressed) {
+    reason = 'Low model confidence. Review required.';
+  } else if (calls.isEmpty || transcript.trim().isEmpty) {
     reason = 'No actionable call. Review and choose what to save.';
   } else if (score == null || !score.isFinite || score < .1 || score > 1) {
     reason = 'Low or missing confidence. Review required.';
@@ -219,16 +227,7 @@ List<Draft> parseVoiceResult(Map<String, dynamic> result, DateTime reference) {
     reason = 'The model did not report success.';
   }
   if (calls.isEmpty) {
-    return [
-      Draft(
-        title: '',
-        type: 'task',
-        originalTranscript: transcript,
-        referenceTime: reference,
-        confidence: score,
-        reviewReason: reason,
-      ),
-    ];
+    return _smartExtractDrafts(transcript, reference, score);
   }
   return calls.map((call) {
     final map = call is Map ? call : <String, dynamic>{};
@@ -242,14 +241,18 @@ List<Draft> parseVoiceResult(Map<String, dynamic> result, DateTime reference) {
       'add_reminder' => 'reminder',
       'add_shopping_item' => 'shopping',
       'log_idea' => 'idea',
-      _ => '',
+      _ => 'task',
     };
+    var title = type == 'shopping' ? s('item') : s('title');
+    if (title.trim().isEmpty && transcript.trim().isNotEmpty) {
+      title = transcript.trim();
+    }
     final draft = Draft(
       type: type,
-      title: type == 'shopping' ? s('item') : s('title'),
+      title: title,
       originalTranscript: transcript,
       referenceTime: reference,
-      confidence: score,
+      confidence: score ?? (isSuppressed ? 0.05 : null),
       body: type == 'idea'
           ? s('description')
           : type == 'shopping'
@@ -262,11 +265,87 @@ List<Draft> parseVoiceResult(Map<String, dynamic> result, DateTime reference) {
       reviewReason: reason,
     );
     if ((type == 'note' || type == 'idea') && draft.body.trim().isEmpty) {
-      draft.reviewReason = 'Body is missing. Review required.';
+      draft.body = transcript.trim();
     }
     if (draft.resolvedDate?.usedDefaultTime == true) {
       draft.reviewReason = 'Time defaulted to 09:00. Confirm or edit it.';
     }
     return draft;
   }).toList();
+}
+
+List<Draft> _smartExtractDrafts(
+  String transcript,
+  DateTime reference,
+  double? score,
+) {
+  final trimmed = transcript.trim();
+  if (trimmed.isEmpty) {
+    return [
+      Draft(
+        title: '',
+        type: 'task',
+        originalTranscript: transcript,
+        referenceTime: reference,
+        confidence: score,
+        reviewReason: 'No speech detected.',
+      ),
+    ];
+  }
+
+  final lower = trimmed.toLowerCase();
+  String type = 'task';
+  if (RegExp(
+    r'\b(buy|order|purchase|grocery|groceries|shopping|milk|eggs|bread|coffee|store|pick up)\b',
+  ).hasMatch(lower)) {
+    type = 'shopping';
+  } else if (RegExp(r'\b(remind|alarm|alert|reminder)\b').hasMatch(lower) ||
+      RegExp(
+        r'\b(tomorrow|today|tonight|next week|at \d|at (?:one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve))\b',
+      ).hasMatch(lower)) {
+    type = 'reminder';
+  } else if (RegExp(r'\b(note|meeting|minutes|summary|agreed)\b').hasMatch(lower)) {
+    type = 'note';
+  } else if (RegExp(r'\b(idea|what if|thought|maybe we could|pitch)\b').hasMatch(lower)) {
+    type = 'idea';
+  }
+
+  var title = trimmed
+      .replaceAll(
+        RegExp(
+          r'^(remind me to|remember to|don\x27t forget to|i need to|please|could you|can you|buy|pick up|note that|idea:?)\s+',
+          caseSensitive: false,
+        ),
+        '',
+      )
+      .trim();
+  if (title.isEmpty) title = trimmed;
+  title = title[0].toUpperCase() + title.substring(1);
+
+  String dateText = '';
+  final dateMatch = RegExp(
+    r'\b((?:tomorrow|today|day after tomorrow|this (?:monday|tuesday|wednesday|thursday|friday|saturday|sunday)|next (?:monday|tuesday|wednesday|thursday|friday|saturday|sunday))(?: (?:at )?\S+(?: \S+)?)?|in \d+ (?:minute|hour|day)s?)\b',
+    caseSensitive: false,
+  ).firstMatch(lower);
+
+  if (dateMatch != null) {
+    dateText = dateMatch.group(0)!;
+    title = title
+        .replaceAll(RegExp(RegExp.escape(dateText), caseSensitive: false), '')
+        .trim();
+    title = title.replaceAll(RegExp(r'\s+(at|by|on)$', caseSensitive: false), '').trim();
+  }
+
+  return [
+    Draft(
+      type: type,
+      title: title.isEmpty ? trimmed : title,
+      originalTranscript: transcript,
+      referenceTime: reference,
+      confidence: score ?? 0.05,
+      dateText: dateText,
+      body: type == 'note' || type == 'idea' ? trimmed : '',
+      reviewReason: 'Voice recognized. Review and confirm item.',
+    ),
+  ];
 }

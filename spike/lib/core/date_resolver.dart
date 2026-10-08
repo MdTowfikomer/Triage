@@ -54,6 +54,20 @@ class DateResolver {
     'saturday': 6,
     'sunday': 7,
   };
+  static const _hourWords = {
+    'one': '1',
+    'two': '2',
+    'three': '3',
+    'four': '4',
+    'five': '5',
+    'six': '6',
+    'seven': '7',
+    'eight': '8',
+    'nine': '9',
+    'ten': '10',
+    'eleven': '11',
+    'twelve': '12',
+  };
   static const _months = {
     'january': 1,
     'jan': 1,
@@ -127,6 +141,14 @@ class DateResolver {
     var text = original.toLowerCase().replaceAll(RegExp(r'\s+'), ' ');
     text = text.replaceFirst(RegExp(r'[.!?]+$'), '').trim();
     text = text.replaceAllMapped(_meridiem, (match) => '${match[1]}m');
+
+    // Normalize spoken clock words before time evaluation
+    for (final entry in _hourWords.entries) {
+      text = text.replaceAll(
+        RegExp(r'\b' + entry.key + r'(?=\s*(?:am|pm|o[\x27\s]?clock|:\d{2}))\b'),
+        entry.value,
+      );
+    }
 
     try {
       final duration = _duration.firstMatch(text);
