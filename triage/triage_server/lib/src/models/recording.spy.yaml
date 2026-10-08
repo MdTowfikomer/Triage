@@ -1,0 +1,12 @@
+class: Recording
+table: recordings
+fields:
+  inboxItemId: int
+  inboxItem: InboxItem?, relation(name=inbox_recording, field=inboxItemId, onDelete=Cascade)
+  storageUrl: String
+  durationMs: int
+  createdAt: DateTime
+indexes:
+  recording_item_unique:
+    fields: inboxItemId
+    unique: true

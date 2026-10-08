@@ -1,0 +1,6 @@
+class: InboxEvent
+fields:
+  operation: String
+  itemId: int
+  item: InboxItem?
+  occurredAt: DateTime

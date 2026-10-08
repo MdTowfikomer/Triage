@@ -1,0 +1,25 @@
+class: InboxItem
+table: inbox_items
+fields:
+  userId: UuidValue, relation(parent=serverpod_auth_core_user, onDelete=Cascade)
+  type: String
+  title: String
+  body: String?
+  tags: List<String>?
+  priority: String?
+  emoji: String?
+  dueDate: DateTime?
+  redactedTranscript: String
+  isCompleted: bool, defaultModel=false
+  completedAt: DateTime?
+  confidence: double?
+  createdAt: DateTime
+  reminder: Reminder?, relation(name=inbox_reminder)
+  recording: Recording?, relation(name=inbox_recording)
+indexes:
+  inbox_user_idx:
+    fields: userId
+  inbox_type_idx:
+    fields: type
+  inbox_created_idx:
+    fields: createdAt

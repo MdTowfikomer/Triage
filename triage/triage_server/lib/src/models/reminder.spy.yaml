@@ -1,0 +1,15 @@
+class: Reminder
+table: reminders
+fields:
+  inboxItemId: int
+  inboxItem: InboxItem?, relation(name=inbox_reminder, field=inboxItemId, onDelete=Cascade)
+  triggerAt: DateTime
+  recurring: String
+  isFired: bool, defaultModel=false
+  createdAt: DateTime
+indexes:
+  reminder_item_unique:
+    fields: inboxItemId
+    unique: true
+  reminder_trigger_idx:
+    fields: triggerAt

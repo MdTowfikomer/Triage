@@ -1,0 +1,19 @@
+emailIdp:
+  - login:
+  - startRegistration:
+  - verifyRegistrationCode:
+  - finishRegistration:
+  - startPasswordReset:
+  - verifyPasswordResetCode:
+  - finishPasswordReset:
+  - hasAccount:
+jwtRefresh:
+  - refreshAccessToken:
+inbox:
+  - createItem:
+  - listItems:
+  - completeItem:
+  - updateItem:
+  - deleteItem:
+sync:
+  - streamInbox:

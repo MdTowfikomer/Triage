@@ -1,0 +1,30 @@
+services:
+  # Development services
+  postgres:
+    image: ghcr.io/serverpod/postgres:16
+    ports:
+      - "8090:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_DB: triage
+      POSTGRES_PASSWORD: "-d3vjZ4MJDQI4ilI9liUhgVIvZ4pBBZs"
+    volumes:
+      - triage_data:/var/lib/postgresql/data
+
+
+  # Test services
+  postgres_test:
+    image: ghcr.io/serverpod/postgres:16
+    ports:
+      - "9090:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_DB: triage_test
+      POSTGRES_PASSWORD: "E8rN6x66rq8c9aYbsFxBHtudP9onj3ru"
+    volumes:
+      - triage_test_data:/var/lib/postgresql/data
+
+
+volumes:
+  triage_data:
+  triage_test_data:
