@@ -1,5 +1,7 @@
 # Triage — Project Execution Plan & Task Tracker
 
+Current voice milestone: Whistle STT → local PII scrub → Serverpod Laya/tool-model action funnel → Android app launch or confirmed inbox save, with a deterministic offline fallback. This supersedes the original Needle-only routing plan below; see [ACTION_FUNNEL.md](ACTION_FUNNEL.md).
+
 > **Hackathon Deadline:** Oct 14, 2026, 23:59 CEST (**Oct 15, 2026, 03:29 IST**)  
 > **Today:** Day 1 (Oct 7, 2026)
 

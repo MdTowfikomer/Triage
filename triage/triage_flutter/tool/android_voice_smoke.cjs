@@ -13,9 +13,10 @@ const executablePath = process.env.SPIKE_CHROME || path.join(
 );
 
 async function main() {
-  if (!fs.existsSync(path.join(assets, 'models/needle3.cact'))) {
+  if (!fs.existsSync(path.join(assets, 'models/whistle.cact'))) {
     throw new Error('Run tool/prepare_android_voice.ps1 before this smoke test.');
   }
+  assert.equal(fs.existsSync(path.join(assets, 'models/needle3.cact')), false, 'Mobile assets must not include the Needle routing model.');
   const server = makeServer(assets).listen(0, '127.0.0.1');
   await new Promise(resolve => server.once('listening', resolve));
   let browser;
@@ -35,14 +36,15 @@ async function main() {
     await page.evaluate(() => window.triageNeedleReceive(JSON.stringify({ requestId: 'init', action: 'init' })));
     const initialized = await page.waitForFunction(() => window.voiceResponses.find(item => item.requestId === 'init'));
     const initResult = await initialized.jsonValue();
-    assert.ok(initResult.result?.prefix_tokens > 0, 'The bundled worker did not initialize Needle.');
+    assert.equal(initResult.result?.stt_only, true, 'The bundled worker did not initialize Whistle-only capture.');
 
     await page.evaluate(() => window.triageNeedleReceive(JSON.stringify({
       requestId: 'text', action: 'text', text: 'Remind me to call the dentist tomorrow at 3pm',
     })));
     const routed = await page.waitForFunction(() => window.voiceResponses.find(item => item.requestId === 'text'));
     const textResult = (await routed.jsonValue()).result;
-    assert.equal(textResult.routing?.parsed?.function_calls?.[0]?.name, 'add_reminder');
+    assert.equal(textResult.transcript, 'Remind me to call the dentist tomorrow at 3pm');
+    assert.equal(textResult.routing, undefined, 'Mobile capture must not perform Needle routing.');
 
     const wav = fs.readFileSync(fixture);
     const dataTag = wav.indexOf(Buffer.from('data'));
@@ -54,7 +56,7 @@ async function main() {
     const audio = await page.waitForFunction(() => window.voiceResponses.find(item => item.requestId === 'audio'));
     const audioResult = (await audio.jsonValue()).result;
     assert.ok(audioResult.transcript?.length > 0, 'Whistle returned an empty transcript for the fixture.');
-    assert.ok(audioResult.routing, 'Needle did not route the Whistle transcript.');
+    assert.equal(audioResult.routing, undefined, 'Whistle must return STT without Needle routing.');
     process.stdout.write(`Android WebView bridge smoke passed: ${audioResult.transcript}\n`);
   } finally {
     await browser?.close();

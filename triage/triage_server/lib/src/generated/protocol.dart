@@ -25,11 +25,13 @@ import 'inbox_item.dart' as _iv6iq8qv;
 import 'recording.dart' as _ih2awd28;
 import 'reminder.dart' as _ic7cmrsw;
 import 'triage_exception.dart' as _i6yvegu7;
+import 'voice_action.dart' as _it6n72xo;
 export 'inbox_event.dart';
 export 'inbox_item.dart';
 export 'recording.dart';
 export 'reminder.dart';
 export 'triage_exception.dart';
+export 'voice_action.dart';
 
 class Protocol extends _is.DatabaseSerializationManager {
   Protocol._();
@@ -389,6 +391,9 @@ class Protocol extends _is.DatabaseSerializationManager {
     if (t == _i6yvegu7.TriageException) {
       return _i6yvegu7.TriageException.fromJson(data) as T;
     }
+    if (t == _it6n72xo.VoiceActionResult) {
+      return _it6n72xo.VoiceActionResult.fromJson(data) as T;
+    }
     if (t == _is.getType<_i7w8akd3.ReminderFutureCallFireModel?>()) {
       return (data != null
               ? _i7w8akd3.ReminderFutureCallFireModel.fromJson(data)
@@ -409,6 +414,10 @@ class Protocol extends _is.DatabaseSerializationManager {
     }
     if (t == _is.getType<_i6yvegu7.TriageException?>()) {
       return (data != null ? _i6yvegu7.TriageException.fromJson(data) : null)
+          as T;
+    }
+    if (t == _is.getType<_it6n72xo.VoiceActionResult?>()) {
+      return (data != null ? _it6n72xo.VoiceActionResult.fromJson(data) : null)
           as T;
     }
     if (t == List<String>) {
@@ -455,6 +464,7 @@ class Protocol extends _is.DatabaseSerializationManager {
       _ih2awd28.Recording => 'Recording',
       _ic7cmrsw.Reminder => 'Reminder',
       _i6yvegu7.TriageException => 'TriageException',
+      _it6n72xo.VoiceActionResult => 'VoiceActionResult',
       _ => null,
     };
   }
@@ -481,6 +491,8 @@ class Protocol extends _is.DatabaseSerializationManager {
         return 'Reminder';
       case _i6yvegu7.TriageException():
         return 'TriageException';
+      case _it6n72xo.VoiceActionResult():
+        return 'VoiceActionResult';
     }
     className = _iais.Protocol().getClassNameForObject(data);
     if (className != null) {
@@ -524,6 +536,9 @@ class Protocol extends _is.DatabaseSerializationManager {
     }
     if (dataClassName == 'TriageException') {
       return deserialize<_i6yvegu7.TriageException>(data['data']);
+    }
+    if (dataClassName == 'VoiceActionResult') {
+      return deserialize<_it6n72xo.VoiceActionResult>(data['data']);
     }
     if (dataClassName.startsWith('serverpod_auth_idp.')) {
       data['className'] = dataClassName.substring(19);

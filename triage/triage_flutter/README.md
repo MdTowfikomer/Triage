@@ -1,12 +1,12 @@
 # Triage Flutter client
 
-Custom obsidian inbox, official Serverpod 4 email auth, dynamic voice capsule, on-device Needle/Whistle routing, and device-local drafts/transcripts.
+Custom obsidian inbox, official Serverpod 4 email auth, dynamic voice capsule, on-device Whistle STT/PII filtering, backend action funnel, and device-local drafts/transcripts.
 
 See [FLUTTER_UI.md](../../docs/FLUTTER_UI.md) for setup, theme tokens, verification, screenshots, and privacy/platform limitations.
 
 See [PHONE_DEMO_GUIDE.md](../../docs/PHONE_DEMO_GUIDE.md) for the two-client phone/laptop walkthrough, LAN binding, Android alerts, and the voice-platform boundary.
 
-Android APK voice capture uses the bundled Needle/Whistle WASM engine in a local WebView and the `record` plugin for 16 kHz PCM. Run `./tool/prepare_web.ps1 -DownloadModels` before building; see the phone demo guide for APK instructions and physical-device verification limits.
+Android capture uses Whistle-only WASM in a local WebView and `record` for 16 kHz PCM. Needle 3 routing is excluded. Run `./tool/prepare_web.ps1 -DownloadModels` before building; see [ACTION_FUNNEL.md](../../docs/ACTION_FUNNEL.md) for Laya/tool-model configuration and offline/demo behavior.
 
 ```powershell
 ./tool/prepare_web.ps1 -DownloadModels

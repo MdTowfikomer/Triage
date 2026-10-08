@@ -22,6 +22,7 @@ import 'package:triage_server/src/generated/future_calls_generated_models/remind
     as _i266jsul;
 import 'package:triage_server/src/generated/inbox_event.dart' as _itthhe7m;
 import 'package:triage_server/src/generated/inbox_item.dart' as _iaro1wa7;
+import 'package:triage_server/src/generated/voice_action.dart' as _i31v6uq3;
 import 'package:triage_server/src/generated/protocol.dart';
 import 'package:triage_server/src/generated/endpoints.dart';
 export 'package:serverpod_test/serverpod_test_public_exports.dart';
@@ -164,6 +165,8 @@ class TestEndpoints {
   late final _InboxEndpoint inbox;
 
   late final _SyncEndpoint sync;
+
+  late final _VoiceEndpoint voice;
 }
 
 class _InternalTestEndpoints extends TestEndpoints
@@ -186,6 +189,10 @@ class _InternalTestEndpoints extends TestEndpoints
       serializationManager,
     );
     sync = _SyncEndpoint(
+      endpoints,
+      serializationManager,
+    );
+    voice = _VoiceEndpoint(
       endpoints,
       serializationManager,
     );
@@ -744,6 +751,50 @@ class _SyncEndpoint {
       _localTestStreamManager.outputStreamController,
     );
     return _localTestStreamManager.outputStreamController.stream;
+  }
+}
+
+class _VoiceEndpoint {
+  _VoiceEndpoint(
+    this._endpointDispatch,
+    this._serializationManager,
+  );
+
+  final _is.EndpointDispatch _endpointDispatch;
+
+  final _is.SerializationManager _serializationManager;
+
+  _ida.Future<_i31v6uq3.VoiceActionResult> routeVoice(
+    _ist.TestSessionBuilder sessionBuilder,
+    String sanitizedTranscript,
+  ) async {
+    return _ist.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _ist.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'voice',
+            method: 'routeVoice',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'voice',
+          methodName: 'routeVoice',
+          parameters: _ist.testObjectToJson({
+            'sanitizedTranscript': sanitizedTranscript,
+          }),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _ida.Future<_i31v6uq3.VoiceActionResult>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
   }
 }
 

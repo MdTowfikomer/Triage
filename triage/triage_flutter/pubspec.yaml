@@ -9,6 +9,8 @@ environment:
 resolution: workspace
 
 dependencies:
+  triage_decision:
+    path: ../triage_decision
   flutter:
     sdk: flutter
   triage_client:

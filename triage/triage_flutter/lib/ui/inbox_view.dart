@@ -40,6 +40,8 @@ class _InboxViewState extends State<InboxView> with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state != AppLifecycleState.resumed) {
       widget.controller.pauseForBackground();
+    } else {
+      widget.controller.resumeFromBackground();
     }
   }
 

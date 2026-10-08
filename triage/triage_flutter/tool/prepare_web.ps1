@@ -7,14 +7,22 @@ New-Item -ItemType Directory -Force -Path (Join-Path $spikeRoot 'assets/audio') 
 if ($DownloadModels) { & (Join-Path $spikeRoot 'scripts/setup.ps1') }
 New-Item -ItemType Directory -Force -Path (Join-Path $appRoot 'assets/fonts') | Out-Null
 Copy-Item -LiteralPath (Join-Path $spikeRoot 'assets/tools.json') -Destination (Join-Path $appRoot 'assets/tools.json')
-foreach ($file in @('bridge.js', 'engine.js', 'needle_worker.js')) {
+foreach ($file in @('bridge.js')) {
   Copy-Item -LiteralPath (Join-Path $spikeRoot "web/$file") -Destination (Join-Path $appRoot "web/$file")
 }
-foreach ($folder in @('vendor', 'models')) {
+Copy-Item -LiteralPath (Join-Path $appRoot 'web/android_voice/whistle_engine.js') -Destination (Join-Path $appRoot 'web/engine.js') -Force
+Copy-Item -LiteralPath (Join-Path $appRoot 'web/android_voice/needle_worker.js') -Destination (Join-Path $appRoot 'web/needle_worker.js') -Force
+foreach ($folder in @('vendor')) {
   $sourcePath = Join-Path $spikeRoot "web/$folder"
   if (!(Test-Path -LiteralPath $sourcePath)) { throw 'Run tool/prepare_web.ps1 -DownloadModels first.' }
   Copy-Item -LiteralPath $sourcePath -Destination (Join-Path $appRoot 'web') -Recurse -Force
 }
+$webModelRoot = Join-Path $appRoot 'web/models'
+New-Item -ItemType Directory -Force -Path $webModelRoot | Out-Null
+Copy-Item -LiteralPath (Join-Path $spikeRoot 'web/models/whistle.cact') -Destination (Join-Path $webModelRoot 'whistle.cact') -Force
+$obsoleteWebModel = [IO.Path]::GetFullPath((Join-Path $webModelRoot 'needle3.cact'))
+if (!$obsoleteWebModel.StartsWith([IO.Path]::GetFullPath($webModelRoot) + [IO.Path]::DirectorySeparatorChar)) { throw 'Invalid generated web model path.' }
+if (Test-Path -LiteralPath $obsoleteWebModel) { Remove-Item -LiteralPath $obsoleteWebModel }
 $redactRoot = Join-Path $appRoot 'tool/redact'
 Push-Location $redactRoot
 try {

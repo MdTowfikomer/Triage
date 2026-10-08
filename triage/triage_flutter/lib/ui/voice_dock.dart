@@ -323,7 +323,7 @@ class _Confirmation extends StatelessWidget {
                 runSpacing: 8,
                 children: [
                   ActionButton(
-                    'Save Now',
+                    review ? 'Save' : 'Save Now',
                     key: const Key('save-now'),
                     primary: true,
                     busy: saving,

@@ -1,6 +1,6 @@
 # Triage phone and live-sync demo
 
-The native Android APK now records microphone audio as bounded 16 kHz mono PCM and runs the same pinned Needle/Whistle WASM worker and models in a hidden local WebView. It uses the system WebView's WebAssembly engine rather than a custom native Needle/FFI build. The browser route remains available for laptop Chrome and Android Chrome; the APK also schedules native reminders. Physical-device permission/audio behavior still needs confirmation on the target handset before filming.
+The native Android APK records bounded 16 kHz mono PCM and runs Whistle STT in a hidden local WebView. On-device Desert Ant scrubs the transcript before the authenticated `voice.routeVoice` RPC; the Serverpod action funnel returns an app launch or an inbox card. Needle 3 no longer performs mobile routing or slot filling. Configure Laya and the tool model using [ACTION_FUNNEL.md](ACTION_FUNNEL.md). Without model services the backend uses a populated deterministic fallback; `TRIAGE_DEMO=true` uses that fallback locally. Physical-device permission/audio/app-launch behavior still needs confirmation on the target handset before filming.
 
 ## 1. Prepare the PC
 
@@ -9,11 +9,13 @@ Install Flutter 3.38.1 or newer, Android platform tools (`adb`), and Docker Desk
 ```powershell
 $env:PUB_CACHE = "$PWD/.spike-cache/pub"
 $env:PATH = "$PWD/.spike-cache/flutter/bin;$PWD/.spike-cache/flutter/bin/cache/dart-sdk/bin;$PWD/.spike-cache/pub/bin;$env:PATH"
+Push-Location triage
 flutter pub get
+Pop-Location
 ./triage/triage_flutter/tool/prepare_web.ps1 -DownloadModels
 ```
 
-The first setup downloads about 52 MB of Needle/Whistle model weights, plus the Flutter web build assets. The first privacy check in a browser downloads the pinned Desert Ant Redact model (about 24.5 MB) from its model host and caches it on device; transcript text is processed locally and is never part of that download. The first browser capture can take longer while these models load and Needle prepares its prefix. In this environment, the browser smoke test successfully initialized LiteRT but the Hugging Face model listing request returned HTTP 405; therefore model download/runtime masking in the browser still needs validation on a network that permits that host/API. Redaction fails closed, so saves remain blocked if it cannot initialize.
+The full historical spike setup downloads about 52 MB of Needle/Whistle weights; the current app loads only the 16.1 MiB Whistle archive. The first privacy check in a browser downloads the pinned Desert Ant Redact model (about 24.5 MB) from its model host and caches it on device; transcript text is processed locally and is never part of that download. The first capture can take longer while models load. In this environment, the browser smoke test successfully initialized LiteRT but the Hugging Face model listing request returned HTTP 405; therefore browser model download/runtime masking still needs validation on a network that permits that host/API. Redaction fails closed, so routing and saves remain blocked if it cannot initialize.
 
 Find the PC's Wi-Fi IPv4 address with `ipconfig` (look under the connected Wireless LAN adapter; ignore VPN, Docker, and disconnected adapters). Keep the phone and PC on the same trusted network.
 
@@ -49,9 +51,11 @@ flutter build apk --dart-define=TRIAGE_DEMO=true
 adb install -r .\build\app\outputs\flutter-apk\app-release.apk
 ```
 
-The release APK is written to `triage/triage_flutter/build/app/outputs/flutter-apk/app-release.apk`. Tap the voice capsule; Android should prompt for microphone permission, then show recording elapsed time and waveform. Tap again to stop. PCM16 samples are capped at 30 seconds, passed to the local WebView worker, transcribed by Whistle, and routed by Needle before the existing date/redaction/review flow. The demo define uses the local demo repository, not Serverpod persistence. For a backend-backed APK, omit `TRIAGE_DEMO=true` and pass `--dart-define=SERVER_URL=http://<PC_WIFI_IPV4>:8080/`.
+The release APK is written to `triage/triage_flutter/build/app/outputs/flutter-apk/app-release.apk`. Tap the voice capsule; Android should prompt for microphone permission, then show recording elapsed time and waveform. Tap again to stop. Audio is capped at 30 seconds, transcribed by Whistle, scrubbed locally, then routed through the action funnel. The demo define uses the offline deterministic router and local demo repository, not Serverpod or live Laya/LFM inference. For a backend-backed APK, omit `TRIAGE_DEMO=true` and pass `--dart-define=SERVER_URL=http://<PC_WIFI_IPV4>:8080/`, configure the model-service environment, and sign in.
 
-The worker, WASM binary, tools and both model files are packaged in Flutter assets; the first initialization loads roughly 52 MB of Needle/Whistle model data from the APK. `cact` and `wasm` are marked no-compress in Android resources. No audio file is written to disk or uploaded. The release artifact built and verified in this checkout is 226.9 MB at `triage/triage_flutter/build/app/outputs/flutter-apk/app-release.apk`. Because models are bundled, rebuild after running the preparation command if the source model revision changes.
+The final release APK is **193.3 MB** (202,641,012 bytes) at `triage/triage_flutter/build/app/outputs/flutter-apk/app-release.apk`. Archive inspection confirms the Whistle model and shared WASM binary are stored uncompressed, `needle3.cact` is absent, and the STT wrapper has no `needle_complete` call. No audio file is written to disk or uploaded. Rebuild after preparing assets if the source model revision changes.
+
+Device-action acceptance: say “Open WhatsApp”, “Open Calendar”, “Open Maps”, “Open Mail”, “Open Clock”, “Open Notes” and “Open Browser”. Installed targets should open immediately and show a launch toast. Missing/default-app targets should retain a review card. These actions should not create inbox rows. Then capture an inbox utterance and verify the prefilled card, countdown, Edit cancellation and Save. For live sync, use the same account on both backend-backed clients; the demo APK is unsuitable for that check.
 
 ## 4. Start Flutter Web and connect the phone
 
@@ -81,26 +85,26 @@ The plugin does not support scheduled delivery on Flutter Web. To exercise Andro
 flutter run -d <ANDROID_DEVICE_ID> --dart-define=SERVER_URL=http://<PC_WIFI_IPV4>:8080/
 ```
 
-Grant notification and exact-alarm permissions when Android requests them. In the Android shell, tap the voice capsule and grant microphone permission to test local microphone-to-Needle inference. For a quick reminder smoke test, create a reminder and leave the app; local alert delivery also depends on Android notification settings and OEM battery policies.
+Grant notification and exact-alarm permissions when Android requests them. In the Android shell, tap the voice capsule and grant microphone permission to test Whistle transcription and the action funnel. For a quick reminder smoke test, create a reminder and leave the app; local alert delivery also depends on Android notification settings and OEM battery policies.
 
 ## 6. Expected six-utterance behavior
 
-These are the pinned model's measured WASM outputs documented in [SPIKE_RESULTS.md](SPIKE_RESULTS.md), not hand-authored expected calls. A suppressed candidate stays in Review Required and is never automatically saved.
+These routes are verified by the **current deterministic fallback tests**, not live Laya/LFM inference measurements. The old Needle measurements remain in [SPIKE_RESULTS.md](SPIKE_RESULTS.md) as historical evidence. All auto-saves also require successful privacy processing and valid required fields.
 
-| Utterance | Measured route | Client behavior |
+| Utterance | Current fallback route | Client behavior |
 | --- | --- | --- |
-| “Remind me to call the dentist tomorrow at 3pm” | `add_reminder`, confidence 0.2972 | Resolves local tomorrow 15:00 to UTC, shows confirmation, saves redacted item, schedules Android alert. |
-| “Buy eggs, milk, and bread from Whole Foods” | Three suppressed shopping candidates, confidence 0.0172; quantity/store extraction is incorrect | Review Required with raw transcript local; no shopping rows are written until user repairs the fields. |
-| “The client meeting went well, they approved the Q4 budget” | Suppressed task candidate, confidence 0.0052 | Review Required; no automatic note is created. |
-| “Fix the login bug by Friday, high priority” | Suppressed task candidate, confidence 0.0941 | Review Required; no automatic task is created. |
-| “What if we made the onboarding a game?” | Suppressed task candidate, confidence 0.0162 | Review Required; no automatic idea is created. |
-| “Um, so, email Sarah about the proposal, and oh, grab milk” | Two suppressed candidates, confidence 0.0438 | Review Required; no candidate is promoted or conjunction-split. User must edit/create the intended items. |
+| “Remind me to call the dentist tomorrow at 3pm” | `add_reminder`; title “Call the dentist”; heuristic 0.85 | Resolves local tomorrow 15:00, confirms, saves, schedules a native alert. |
+| “Buy eggs, milk, and bread from Whole Foods” | `add_shopping_item`; one list card; store retained; heuristic 0.85 | Prefills “Eggs, milk, and bread” and “Store: Whole Foods”; three-second countdown. |
+| “The client meeting went well, they approved the Q4 budget” | `add_note`; full body; meeting tag; heuristic 0.85 | Prefilled note and countdown. Original transcript remains local. |
+| “Fix the login bug by Friday, high priority” | `add_task`; Friday; high priority; heuristic 0.85 | Review explicitly confirms the default 09:00 time before saving. |
+| “What if we made the onboarding a game?” | `log_idea`; description retained; heuristic 0.85 | Prefilled idea and countdown. |
+| “Um, so, email Sarah about the proposal, and oh, grab milk” | Mixed capture; full text retained; heuristic 0.05 | Review Required. Split or edit the capture; no automatic save. |
 
-The raw original transcript remains in the account-scoped device cache. Needle extracts first; then the official Desert Ant Redact model masks names, address components, emails, phones, payment cards, and government identifiers in transcript/title/body/tags before the confirmation countdown and `createItem`. A deterministic regex/Luhn pass adds defense in depth for formatted email, phone, card, SSN, and street-address patterns. `originalTranscript` is not in the endpoint model or payload. If model redaction fails, the draft remains local and save is blocked. The SDK's published evaluation is not a guarantee that every PII span is detected, so treat redaction as a strong filter rather than proof of zero leakage.
+The raw original transcript remains in the account-scoped device cache. Whistle transcribes first; Desert Ant Redact then scrubs the text before `voice.routeVoice`. Returned transcript/title/body/tags are scrubbed again before `createItem`. A deterministic regex/Luhn pass adds defense in depth for formatted email, phone, card, SSN, and street-address patterns. `originalTranscript` is not in the endpoint model or payload. If model redaction fails, the draft remains local and routing/save are blocked. Redaction is not a guarantee that every contextual PII span is detected.
 
 ## Verification boundaries
 
-- Flutter client tests verify fake audio-result → tool parse → date resolution → redaction → repository write, local raw cache retention, fail-closed redaction, reminder scheduling/cancellation, and two active client controllers consuming create/update/delete events.
+- Flutter client tests verify fake STT result → on-device redaction → backend action adapter → date resolution → confirmation → redacted repository write, allowlisted app launching, local raw retention, fail-closed privacy, reminder scheduling/cancellation, and two active clients consuming create/update/delete events.
 - The Serverpod integration suite verifies authenticated same-user session event delivery and cross-user isolation. This guide has not been run against a physical phone or a user's running backend; use the steps above for the live acceptance demo.
 - Flutter Web audio/model inference has a prior browser integration test. Android APK now uses the native microphone plugin and local WebView WASM runner; no Android handset was attached for this implementation turn, so physical permission prompts, microphone audio, and APK inference must be smoke-tested on the target phone before claiming device validation. iOS native voice capture remains follow-up work.
 - Web notification APIs do not provide scheduled local delivery in the selected plugin; run the native Android shell for OS alert verification.

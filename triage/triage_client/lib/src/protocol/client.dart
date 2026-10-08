@@ -19,6 +19,7 @@ import 'package:serverpod_auth_idp_client/serverpod_auth_idp_client.dart'
 import 'package:serverpod_client/serverpod_client.dart' as _isc;
 import 'package:triage_client/src/protocol/inbox_event.dart' as _i0lnl91c;
 import 'package:triage_client/src/protocol/inbox_item.dart' as _iadxe3ww;
+import 'package:triage_client/src/protocol/voice_action.dart' as _iqzsze1b;
 import 'protocol.dart' as _il2as5qe;
 
 /// By extending [EmailIdpBaseEndpoint], the email identity provider endpoints
@@ -335,6 +336,23 @@ class EndpointSync extends _isc.EndpointRef {
       );
 }
 
+/// {@category Endpoint}
+class EndpointVoice extends _isc.EndpointRef {
+  EndpointVoice(_isc.EndpointCaller caller) : super(caller);
+
+  @override
+  String get name => 'voice';
+
+  /// Expects on-device sanitized text. Does not persist or broadcast the input.
+  _ida.Future<_iqzsze1b.VoiceActionResult> routeVoice(
+    String sanitizedTranscript,
+  ) => caller.callServerEndpoint<_iqzsze1b.VoiceActionResult>(
+    'voice',
+    'routeVoice',
+    {'sanitizedTranscript': sanitizedTranscript},
+  );
+}
+
 class Modules {
   Modules(Client client) {
     serverpod_auth_idp = _iaic.Caller(client);
@@ -377,6 +395,7 @@ class Client extends _isc.ServerpodClientShared {
     jwtRefresh = EndpointJwtRefresh(this);
     inbox = EndpointInbox(this);
     sync = EndpointSync(this);
+    voice = EndpointVoice(this);
     modules = Modules(this);
   }
 
@@ -388,6 +407,8 @@ class Client extends _isc.ServerpodClientShared {
 
   late final EndpointSync sync;
 
+  late final EndpointVoice voice;
+
   late final Modules modules;
 
   @override
@@ -396,6 +417,7 @@ class Client extends _isc.ServerpodClientShared {
     'jwtRefresh': jwtRefresh,
     'inbox': inbox,
     'sync': sync,
+    'voice': voice,
   };
 
   @override

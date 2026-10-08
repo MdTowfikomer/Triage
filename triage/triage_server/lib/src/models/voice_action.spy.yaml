@@ -1,0 +1,16 @@
+class: VoiceActionResult
+fields:
+  actionType: String
+  tool: String
+  appName: String?
+  title: String
+  body: String?
+  category: String
+  dateText: String?
+  priority: String
+  confidence: double
+  latencyMs: int
+  reviewReason: String?
+  recurring: String, default='none'
+  tags: List<String>?
+  routingSource: String, default='deterministic'

@@ -1,5 +1,6 @@
 import 'package:triage_client/triage_client.dart';
 import 'package:triage_spike/core/date_resolver.dart';
+import 'package:triage_decision/action_funnel.dart';
 import 'redact.dart';
 
 const categories = ['task', 'note', 'reminder', 'shopping', 'idea'];
@@ -21,7 +22,7 @@ class Draft {
     DateTime? referenceTime,
     String? localId,
     this.body = '',
-    this.priority = '',
+    this.priority = 'medium',
     this.dateText = '',
     this.tags = '',
     this.recurring = 'none',
@@ -37,6 +38,45 @@ class Draft {
   bool redactionReady = false;
   String? redactedTranscript, redactedTitle, redactedBody;
   List<String>? redactedTags;
+
+  factory Draft.fromAction(
+    VoiceActionResult action,
+    String transcript,
+    DateTime reference,
+  ) {
+    final fallback = FunnelAction.local(transcript);
+    final valid =
+        action.actionType == 'inbox_item' &&
+        inboxTools[action.tool] == action.category &&
+        action.title.trim().isNotEmpty &&
+        action.title.length <= 500 &&
+        ['low', 'medium', 'high'].contains(action.priority) &&
+        action.confidence.isFinite &&
+        action.confidence >= 0 &&
+        action.confidence <= 1 &&
+        ['none', 'daily', 'weekly'].contains(action.recurring);
+    final draft = Draft(
+      title: valid ? action.title.trim() : fallback.title,
+      type: valid ? action.category : fallback.category,
+      originalTranscript: transcript,
+      referenceTime: reference,
+      body: valid ? action.body ?? '' : fallback.body ?? '',
+      priority: valid ? action.priority : fallback.priority,
+      dateText: valid ? action.dateText ?? '' : fallback.dateText ?? '',
+      tags: (valid ? action.tags : fallback.tags)?.join(', ') ?? '',
+      recurring: valid ? action.recurring : fallback.recurring,
+      confidence: valid ? action.confidence : .05,
+      reviewReason: valid
+          ? action.reviewReason ?? ''
+          : 'Action needs review before saving.',
+    );
+    if (draft.resolvedDate?.usedDefaultTime == true) {
+      draft.reviewReason = 'Time defaulted to 09:00. Confirm or edit it.';
+    } else if (draft.validationError != null) {
+      draft.reviewReason = draft.validationError!;
+    }
+    return draft;
+  }
 
   ResolvedDate? get resolvedDate => dateText.trim().isEmpty
       ? null
@@ -225,7 +265,12 @@ List<Draft> parseVoiceResult(Map<String, dynamic> result, DateTime reference) {
       // PRD rule: Suppressed calls are deliberately ignored; never promote them to actions.
       return [
         Draft(
-          title: '',
+          title: transcript.trim().isEmpty
+              ? 'New capture'
+              : transcript.trim().substring(
+                  0,
+                  transcript.trim().length.clamp(0, 500),
+                ),
           type: 'task',
           originalTranscript: transcript,
           referenceTime: reference,
@@ -234,7 +279,7 @@ List<Draft> parseVoiceResult(Map<String, dynamic> result, DateTime reference) {
         ),
       ];
     }
-    return _smartExtractDrafts(transcript, reference, score);
+    return _localReviewDraft(transcript, reference, score);
   }
   return calls.map((call) {
     final map = call is Map ? call : <String, dynamic>{};
@@ -281,77 +326,24 @@ List<Draft> parseVoiceResult(Map<String, dynamic> result, DateTime reference) {
   }).toList();
 }
 
-List<Draft> _smartExtractDrafts(
+List<Draft> _localReviewDraft(
   String transcript,
   DateTime reference,
   double? score,
 ) {
-  final trimmed = transcript.trim();
-  if (trimmed.isEmpty) {
-    return [
-      Draft(
-        title: '',
-        type: 'task',
-        originalTranscript: transcript,
-        referenceTime: reference,
-        confidence: score,
-        reviewReason: 'No speech detected.',
-      ),
-    ];
-  }
-
-  final lower = trimmed.toLowerCase();
-  String type = 'task';
-  if (RegExp(
-    r'\b(buy|order|purchase|grocery|groceries|shopping|milk|eggs|bread|coffee|store|pick up)\b',
-  ).hasMatch(lower)) {
-    type = 'shopping';
-  } else if (RegExp(r'\b(remind|alarm|alert|reminder)\b').hasMatch(lower) ||
-      RegExp(
-        r'\b(tomorrow|today|tonight|next week|at \d|at (?:one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve))\b',
-      ).hasMatch(lower)) {
-    type = 'reminder';
-  } else if (RegExp(r'\b(note|meeting|minutes|summary|agreed)\b').hasMatch(lower)) {
-    type = 'note';
-  } else if (RegExp(r'\b(idea|what if|thought|maybe we could|pitch)\b').hasMatch(lower)) {
-    type = 'idea';
-  }
-
-  var title = trimmed
-      .replaceAll(
-        RegExp(
-          r'^(remind me to|remember to|don\x27t forget to|i need to|please|could you|can you|buy|pick up|note that|idea:?)\s+',
-          caseSensitive: false,
-        ),
-        '',
-      )
-      .trim();
-  if (title.isEmpty) title = trimmed;
-  title = title[0].toUpperCase() + title.substring(1);
-
-  String dateText = '';
-  final dateMatch = RegExp(
-    r'\b((?:tomorrow|today|day after tomorrow|this (?:monday|tuesday|wednesday|thursday|friday|saturday|sunday)|next (?:monday|tuesday|wednesday|thursday|friday|saturday|sunday))(?: (?:at )?\S+(?: \S+)?)?|in \d+ (?:minute|hour|day)s?)\b',
-    caseSensitive: false,
-  ).firstMatch(lower);
-
-  if (dateMatch != null) {
-    dateText = dateMatch.group(0)!;
-    title = title
-        .replaceAll(RegExp(RegExp.escape(dateText), caseSensitive: false), '')
-        .trim();
-    title = title.replaceAll(RegExp(r'\s+(at|by|on)$', caseSensitive: false), '').trim();
-  }
-
+  final action = FunnelAction.local(transcript);
   return [
     Draft(
-      type: type,
-      title: title.isEmpty ? trimmed : title,
+      type: action.category,
+      title: action.title,
       originalTranscript: transcript,
       referenceTime: reference,
       confidence: score ?? 0.05,
-      dateText: dateText,
-      body: type == 'note' || type == 'idea' ? trimmed : '',
+      priority: action.priority,
+      dateText: action.dateText ?? '',
+      body: action.body ?? '',
+      tags: action.tags?.join(', ') ?? '',
+      recurring: action.recurring,
       reviewReason: 'Voice recognized. Review and confirm item.',
     ),
   ];

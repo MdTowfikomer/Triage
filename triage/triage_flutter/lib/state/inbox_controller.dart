@@ -1,10 +1,13 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:triage_client/triage_client.dart';
+import 'package:triage_decision/action_funnel.dart';
+import '../core/app_launcher.dart';
 import '../core/draft.dart';
 import '../core/redact.dart';
 import '../data/inbox_repository.dart';
 import '../data/local_cache.dart';
+import '../data/voice_action_router.dart';
 import '../notifications/reminder_scheduler.dart';
 import '../voice/voice_engine.dart';
 
@@ -25,12 +28,16 @@ class InboxController extends ChangeNotifier {
     required this.voice,
     this.reminders = const NoopReminderScheduler(),
     this.redactor = const LocalPayloadRedactor(),
+    this.actionRouter,
+    this.appLauncher = const AndroidAppLauncher(),
   });
   final InboxRepository repository;
   final LocalCache cache;
   final VoiceEngine voice;
   final ReminderScheduler reminders;
   final PayloadRedactor redactor;
+  final VoiceActionRouter? actionRouter;
+  final AppLauncher appLauncher;
   final List<InboxItem> items = [];
   List<Draft> pending = [];
   CapturePhase phase = CapturePhase.idle;
@@ -42,6 +49,7 @@ class InboxController extends ChangeNotifier {
   Timer? _countdown, _recording;
   StreamSubscription<InboxEvent>? _stream;
   bool _ready = false, _disposed = false, _levelBusy = false, _saving = false;
+  bool _backgrounded = false;
   int _generation = 0;
   Draft? get current => pending.isEmpty ? null : pending.first;
   List<InboxItem> get visible =>
@@ -201,7 +209,12 @@ class InboxController extends ChangeNotifier {
       try {
         final result = await voice.stop();
         if (!_disposed && generation == _generation) {
-          await acceptResult(result, reference: reference);
+          await routeTranscript(
+            result['transcript'] is String
+                ? result['transcript'] as String
+                : '',
+            reference: reference,
+          );
         }
       } catch (_) {
         if (generation == _generation) {
@@ -264,28 +277,116 @@ class InboxController extends ChangeNotifier {
 
   Future<void> captureText(String text) async {
     if (phase != CapturePhase.idle) return;
-    final generation = _generation;
-    final reference = DateTime.now();
     error = '';
+    await routeTranscript(text);
+  }
+
+  /// Whistle STT -> local journal/PII scrub -> backend funnel -> local action.
+  /// Network failure uses the shared deterministic extractor, never Needle.
+  Future<void> routeTranscript(String transcript, {DateTime? reference}) async {
+    _countdown?.cancel();
+    countdownMs = null;
+    final generation = _generation;
+    final clock = reference ?? DateTime.now();
+    VoiceActionResult local(String text) {
+      final a = FunnelAction.local(text);
+      return VoiceActionResult(
+        actionType: a.actionType,
+        tool: a.tool,
+        appName: a.appName,
+        title: a.title,
+        body: a.body,
+        category: a.category,
+        dateText: a.dateText,
+        priority: a.priority,
+        confidence: a.confidence,
+        reviewReason: a.reviewReason,
+        tags: a.tags,
+        recurring: a.recurring,
+        latencyMs: 0,
+        routingSource: 'offline_deterministic',
+      );
+    }
+
+    var action = local(transcript);
+    phase = CapturePhase.processing;
+    status = 'Checking privacy on this device…';
+    _emit();
     try {
-      await _prepare();
+      // A crash during inference must still leave the raw capture device-local.
+      final journal = Draft.fromAction(action, transcript, clock);
+      journal.reviewReason = 'Capture pending. Review before saving.';
+      await cache.saveDrafts([journal]);
+      final sanitized = await redactor.redact([transcript]);
+      if (sanitized.length != 1) throw StateError('Invalid privacy response');
       if (_disposed || generation != _generation) return;
-      phase = CapturePhase.processing;
-      status = 'Routing on this device…';
-      _emit();
-      final result = await voice.route(text);
-      if (!_disposed && generation == _generation) {
-        await acceptResult(result, reference: reference);
+      action = local(sanitized.single);
+      if (actionRouter != null) {
+        status = 'Preparing your action…';
+        _emit();
+        try {
+          action = await actionRouter!
+              .route(sanitized.single)
+              .timeout(voiceRpcTimeout);
+        } catch (_) {
+          // Offline/backend/model failure retains a populated local action.
+        }
       }
     } catch (_) {
-      if (!_disposed && generation == _generation) {
-        // Typed capture remains available on platforms without the WASM bridge.
-        await acceptResult({'transcript': text}, reference: reference);
-        current?.reviewReason =
-            'On-device engine unavailable. Choose category and title manually.';
-        _emit();
-      }
+      action = action.copyWith(
+        confidence: .05,
+        reviewReason:
+            'Privacy or local storage check failed. Review this local capture.',
+      );
     }
+    if (_disposed || generation != _generation) return;
+    if (_backgrounded) {
+      action = action.copyWith(
+        actionType: 'inbox_item',
+        tool: action.actionType == 'device_action' ? 'add_task' : action.tool,
+        category: action.actionType == 'device_action'
+            ? 'task'
+            : action.category,
+        confidence: .05,
+        reviewReason: 'App was inactive. Review before saving or launching.',
+      );
+    }
+    if (action.actionType == 'device_action' &&
+        action.tool == 'open_app' &&
+        action.appName != null &&
+        supportedApps.contains(action.appName) &&
+        requestedApp(transcript) == action.appName &&
+        action.confidence.isFinite &&
+        action.confidence >= .1 &&
+        action.confidence <= 1 &&
+        (action.reviewReason?.isEmpty ?? true)) {
+      var launched = false;
+      try {
+        launched = await appLauncher.launch(action.appName!);
+      } catch (_) {}
+      if (_disposed || generation != _generation) return;
+      if (launched) {
+        pending = [];
+        phase = CapturePhase.idle;
+        status =
+            'Launching ${action.appName == 'whatsapp' ? 'WhatsApp' : action.appName}…';
+        try {
+          await cache.saveDrafts([]);
+        } catch (_) {}
+        _emit();
+        return;
+      }
+      action = action.copyWith(
+        actionType: 'inbox_item',
+        tool: 'add_task',
+        category: 'task',
+        confidence: .05,
+        reviewReason:
+            'App is unavailable on this device. Review or cancel this capture.',
+      );
+    }
+    pending = [Draft.fromAction(action, transcript, clock)];
+    await _present();
   }
 
   Future<void> acceptResult(
@@ -297,6 +398,7 @@ class InboxController extends ChangeNotifier {
   }
 
   Future<void> _present() async {
+    final generation = _generation;
     _countdown?.cancel();
     countdownMs = null;
     status = '';
@@ -312,7 +414,9 @@ class InboxController extends ChangeNotifier {
       for (final draft in pending) {
         if (!draft.redactionReady) await draft.redactForServer(redactor);
       }
+      if (_disposed || generation != _generation) return;
     } catch (_) {
+      if (_disposed || generation != _generation) return;
       phase = CapturePhase.review;
       current!.reviewReason =
           'On-device privacy check failed. Nothing was sent; retry after the model is ready.';
@@ -325,12 +429,16 @@ class InboxController extends ChangeNotifier {
       return;
     }
     status = '';
+    if (_backgrounded) {
+      current!.reviewReason = 'App was inactive. Review before saving.';
+    }
     phase = current!.canAutoSave
         ? CapturePhase.confirmation
         : CapturePhase.review;
     // Persist before starting a timer. Failure must never advance to a write.
     try {
       await cache.saveDrafts(pending);
+      if (_disposed || generation != _generation) return;
     } catch (_) {
       phase = CapturePhase.review;
       error = 'Local draft could not be stored. Auto-save paused.';
@@ -363,6 +471,7 @@ class InboxController extends ChangeNotifier {
   }
 
   void pauseForBackground() {
+    _backgrounded = true;
     if (phase == CapturePhase.confirmation) edit();
     if (phase == CapturePhase.recording) {
       _recording?.cancel();
@@ -371,6 +480,10 @@ class InboxController extends ChangeNotifier {
       status = 'Recording stopped while app was inactive.';
       _emit();
     }
+  }
+
+  void resumeFromBackground() {
+    _backgrounded = false;
   }
 
   Future<void> persistEdits() async {

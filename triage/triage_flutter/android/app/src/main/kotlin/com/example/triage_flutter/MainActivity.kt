@@ -1,6 +1,10 @@
 package com.example.triage_flutter
 
 import android.graphics.Color
+import android.content.Intent
+import android.net.Uri
+import android.provider.AlarmClock
+import android.widget.Toast
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -29,6 +33,40 @@ class MainActivity : FlutterActivity() {
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "triage.apps")
+            .setMethodCallHandler { call, result ->
+                if (call.method != "launch") {
+                    result.notImplemented()
+                    return@setMethodCallHandler
+                }
+                val app = call.argument<String>("appName")
+                // Exact allowlist: the backend cannot supply arbitrary intents,
+                // package names, URLs, recipients, messages or alarm extras.
+                val intent = when (app) {
+                    "whatsapp" -> packageManager.getLaunchIntentForPackage("com.whatsapp")
+                        ?: Intent(Intent.ACTION_VIEW, Uri.parse("whatsapp://"))
+                    "calendar" -> Intent(Intent.ACTION_VIEW, Uri.parse("content://com.android.calendar/time/${System.currentTimeMillis()}"))
+                    "maps" -> Intent(Intent.ACTION_VIEW, Uri.parse("geo:0,0?q="))
+                    "mail" -> Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:"))
+                    "clock" -> Intent(AlarmClock.ACTION_SET_ALARM).putExtra(AlarmClock.EXTRA_SKIP_UI, false)
+                    "notes" -> packageManager.getLaunchIntentForPackage("com.google.android.keep")
+                        ?: Intent("android.intent.action.CREATE_NOTE")
+                    "browser" -> Intent.makeMainSelectorActivity(Intent.ACTION_MAIN, Intent.CATEGORY_APP_BROWSER)
+                    else -> null
+                }
+                if (intent == null) {
+                    result.success(false)
+                } else {
+                    try {
+                        startActivity(intent)
+                        val label = if (app == "whatsapp") "WhatsApp" else app!!.replaceFirstChar { it.uppercase() }
+                        Toast.makeText(this, "Launching $label...", Toast.LENGTH_SHORT).show()
+                        result.success(true)
+                    } catch (_: Exception) {
+                        result.success(false)
+                    }
+                }
+            }
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "triage.redact")
             .setMethodCallHandler { call, result ->
                 if (call.method != "redact") {

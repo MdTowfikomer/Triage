@@ -12,24 +12,23 @@ async function checkedFetch(path) {
 async function dispatch(message) {
   switch (message.action) {
     case 'init': {
-      const [module, models, tools] = await Promise.all([
+      const [module, whistle] = await Promise.all([
         checkedFetch('vendor/needle.wasm')
           .then(response => response.arrayBuffer())
           .then(wasmBinary => createNeedle({ wasmBinary })),
-        Promise.all(['models/needle3.cact', 'models/whistle.cact'].map(async path =>
-          new Uint8Array(await (await checkedFetch(path)).arrayBuffer()))),
-        (await checkedFetch('assets/tools.json')).json(),
+        checkedFetch('models/whistle.cact').then(async response => new Uint8Array(await response.arrayBuffer())),
       ]);
-      engine = new Spike.SpikeEngine(module, tools);
-      models.forEach(bytes => engine.load(bytes));
-      return engine.init();
+      engine = new TriageWhistle.WhistleEngine(module);
+      engine.load(whistle);
+      return { ready: true, stt_only: true, wasm_memory_bytes: module.HEAPU8.buffer.byteLength };
     }
     case 'audio':
       if (!engine) throw new Error('Initialize the engine first');
-      return engine.audio(new Float32Array(message.samples));
+      const stt = engine.transcribe(new Float32Array(message.samples));
+      return { source: 'audio', transcript: stt.parsed.text, stt };
     case 'text':
       if (!engine) throw new Error('Initialize the engine first');
-      return { source: 'text', transcript: message.text, stt: null, routing: engine.route(message.text) };
+      return { source: 'text', transcript: message.text, stt: null };
     default:
       throw new Error(`Unknown action: ${message.action}`);
   }

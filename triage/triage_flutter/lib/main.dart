@@ -7,6 +7,7 @@ import 'package:triage_client/triage_client.dart';
 import 'core/redact.dart';
 import 'data/inbox_repository.dart';
 import 'data/local_cache.dart';
+import 'data/voice_action_router.dart';
 import 'notifications/reminder_scheduler.dart';
 import 'state/inbox_controller.dart';
 import 'ui/auth_view.dart';
@@ -97,6 +98,7 @@ class _InboxMountState extends State<_InboxMount> {
     voice: createVoiceEngine(),
     reminders: LocalReminderScheduler(),
     redactor: DesertAntPayloadRedactor(),
+    actionRouter: widget.demo ? null : ServerVoiceActionRouter(widget.client),
   );
   @override
   void initState() {

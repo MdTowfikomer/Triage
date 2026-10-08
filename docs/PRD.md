@@ -3,15 +3,17 @@
 > **Voice-Driven Smart Inbox & Task Manager**
 > Built for the "Build Something Real" Serverpod Hackathon (deadline: Oct 14, 2026, 23:59 CEST / Oct 15, 03:29 IST)
 
+> **Current architecture update (Oct 9):** the action funnel supersedes the earlier on-device Needle routing plan below. Whistle STT and Desert Ant PII scrubbing stay on the phone; sanitized text goes to Serverpod's Laya/tool-model adapters, with a deterministic offline fallback. Explicit app-opening commands use Android intents. Original transcripts/audio remain local. See [ACTION_FUNNEL.md](ACTION_FUNNEL.md) for the active implementation and verification boundaries.
+
 ---
 
 ## 1. Elevator Pitch
 
-Speak your thoughts throughout the day. Triage listens, understands, and acts. "Email Sarah about the proposal" drafts an email. "Buy milk on the way home" adds a grocery item. "Meeting with the design team went well — we decided on the blue variant" creates a meeting note with the decision extracted. 
+Speak your thoughts throughout the day. Triage listens, understands, and acts. "Email Sarah about the proposal" prefills a task. "Buy milk" adds a grocery item. "The client meeting went well, they approved the Q4 budget" prefills a note. "Open WhatsApp" launches the installed app on Android.
 
-All speech processing and intent routing happen **on-device** — raw audio and original unredacted transcripts never leave your device. Only PII-redacted, structured items are synced to the cloud via Serverpod when you choose to save.
+Speech transcription and PII scrubbing happen **on-device**. Raw audio and original unredacted transcripts stay local. Sanitized transcripts may be sent to the authenticated Serverpod action router during interpretation; approved structured inbox items are persisted and synced after confirmation.
 
-Triage is a **Flutter app** with a **Serverpod backend**, powered by **Cactus Needle** (with Needle Whistle for on-device speech transcription and tool-calling/extraction) and **Desert Ant Labs** models for on-device privacy redaction and metadata enhancement.
+Triage is a **Flutter app** with a **Serverpod backend**, using **Cactus Needle Whistle** for local transcription, **Desert Ant Labs** for on-device privacy scrubbing, and configurable **Laya/tool-model** backend adapters for the action funnel.
 
 ---
 

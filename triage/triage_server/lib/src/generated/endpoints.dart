@@ -21,6 +21,7 @@ import '../auth/email_idp_endpoint.dart' as _iuc1hd5t;
 import '../auth/jwt_refresh_endpoint.dart' as _inwq3ztq;
 import '../endpoints/inbox_endpoint.dart' as _ib2xr017;
 import '../endpoints/sync_endpoint.dart' as _i609im4b;
+import '../endpoints/voice_endpoint.dart' as _iq0gswfc;
 export 'future_calls.dart' show ServerpodFutureCallsGetter;
 
 class Endpoints extends _is.EndpointDispatch {
@@ -49,6 +50,12 @@ class Endpoints extends _is.EndpointDispatch {
         ..initialize(
           server,
           'sync',
+          null,
+        ),
+      'voice': _iq0gswfc.VoiceEndpoint()
+        ..initialize(
+          server,
+          'voice',
           null,
         ),
     };
@@ -430,6 +437,31 @@ class Endpoints extends _is.EndpointDispatch {
               ) => (endpoints['sync'] as _i609im4b.SyncEndpoint).streamInbox(
                 session,
               ),
+        ),
+      },
+    );
+    connectors['voice'] = _is.EndpointConnector(
+      name: 'voice',
+      endpoint: endpoints['voice']!,
+      methodConnectors: {
+        'routeVoice': _is.MethodConnector(
+          name: 'routeVoice',
+          params: {
+            'sanitizedTranscript': _is.ParameterDescription(
+              name: 'sanitizedTranscript',
+              type: _is.getType<String>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _is.Session session,
+                Map<String, dynamic> params,
+              ) async =>
+                  (endpoints['voice'] as _iq0gswfc.VoiceEndpoint).routeVoice(
+                    session,
+                    params['sanitizedTranscript'],
+                  ),
         ),
       },
     );

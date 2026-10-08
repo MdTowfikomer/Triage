@@ -5,6 +5,7 @@ environment:
   sdk: '^3.12.2'
 
 workspace:
+  - triage_decision
   - triage_client
   - triage_server
   - triage_flutter

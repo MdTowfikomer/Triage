@@ -1,5 +1,7 @@
 # Task 3 — Triage backend foundation
 
+The current voice milestone adds authenticated `voice.routeVoice(Session, sanitizedTranscript)` and the transport-only `VoiceActionResult` model. It uses Laya/OpenAI-compatible model adapters with bounded deterministic fallback; it does not change ORM tables or require a migration. Routing performs no inbox write or broadcast. See [ACTION_FUNNEL.md](ACTION_FUNNEL.md) for model-service setup and the revised privacy boundary.
+
 ## Workspace and versions
 
 The official `serverpod create triage --template server --auth --no-redis --no-website --no-webapp --ide none` scaffold produced a Dart workspace under [triage/](../triage/pubspec.yaml):

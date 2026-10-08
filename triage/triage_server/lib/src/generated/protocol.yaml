@@ -17,3 +17,5 @@ inbox:
   - deleteItem:
 sync:
   - streamInbox:
+voice:
+  - routeVoice:

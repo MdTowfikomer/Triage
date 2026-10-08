@@ -193,7 +193,7 @@ void main() {
     await tester.pump(const Duration(milliseconds: 280));
     expect(c.phase, CapturePhase.confirmation);
     expect(find.byKey(const Key('confirmation-card')), findsOneWidget);
-    expect(find.text('Email Sarah'), findsOneWidget);
+    expect(find.text('Email Sarah about the proposal'), findsOneWidget);
   });
   testWidgets('three-second expiration performs exactly one save', (
     tester,
@@ -274,7 +274,8 @@ void main() {
       ),
     );
     expect(c.phase, CapturePhase.review);
-    expect(c.current!.title, isEmpty);
+    expect(c.current!.title, 'Email Sarah about the proposal');
+    expect(c.current!.title, isNot('Unsafe'));
     await tester.pump(const Duration(seconds: 4));
     expect(repo.creates, 0);
   });
@@ -631,22 +632,12 @@ void main() {
   });
 
   testWidgets(
-    'audio transcript routes before PII mask, then writes redacted item',
+    'audio transcript is scrubbed before funnel routing and reminder persistence',
     (tester) async {
       await mount(tester);
-      const raw = 'Email Sarah at sarah@example.com tomorrow at 3pm';
-      voice.response = result(
-        calls: [
-          {
-            'name': 'add_reminder',
-            'arguments': {
-              'title': 'Email Sarah at sarah@example.com',
-              'remind_at': 'tomorrow at 3pm',
-              'recurring': 'none',
-            },
-          },
-        ],
-      )..['transcript'] = raw;
+      const raw =
+          'Remind me to email Sarah at sarah@example.com tomorrow at 3pm';
+      voice.response = {'transcript': raw};
       await c.toggleRecording();
       await tester.pump();
       await c.toggleRecording();
