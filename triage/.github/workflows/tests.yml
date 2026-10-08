@@ -1,0 +1,52 @@
+name: Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      VERSION: '4.0.4'
+      SERVERPOD_PASSWORD_database: 'E8rN6x66rq8c9aYbsFxBHtudP9onj3ru'
+      SERVERPOD_PASSWORD_redis: 'g28AxBBAXRr4SmD03zpDPw5Zd92x2fAk'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.47.6'
+
+      # The test config sets `database.dataPath`, so the tests run against an
+      # embedded PostgreSQL that Serverpod starts itself. No Docker needed.
+      # The binaries are downloaded once and cached here between runs. The
+      # bundle changes with the Serverpod version, so the version is in the key.
+      - name: Cache embedded PostgreSQL binaries
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/serverpod/pg-binaries
+          key: serverpod-pg-binaries-${{runner.os}}-${{env.VERSION}}
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Install Serverpod CLI
+        run: |
+          dart install serverpod_cli@$VERSION
+          # `dart install` puts executables in the Dart data home, which is not
+          # on the PATH of a GitHub runner.
+          echo "${XDG_STATE_HOME:-$HOME/.local/state}/Dart/install/bin" >> "$GITHUB_PATH"
+
+      - name: Run Serverpod generator
+        working-directory: triage_server
+        run: serverpod generate
+
+      - name: Run tests
+        working-directory: triage_server
+        run: |
+          pwsh -NoProfile -File tool/init_secrets.ps1
+          dart test

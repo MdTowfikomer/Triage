@@ -1,0 +1,16 @@
+{
+  "name": "triage-redact-bridge",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "smoke": "node smoke.cjs",
+    "build": "esbuild src/redact_bridge.js --bundle --format=esm --target=es2022 --outfile=../../web/redact_bridge.js"
+  },
+  "dependencies": {
+    "@desert-ant-labs/redact": "3.6.0",
+    "@litertjs/core": "2.5.3"
+  },
+  "devDependencies": {
+    "esbuild": "0.28.2"
+  }
+}
