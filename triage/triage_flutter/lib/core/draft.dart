@@ -196,20 +196,14 @@ List<Draft> parseVoiceResult(Map<String, dynamic> result, DateTime reference) {
           numericScore <= 1
       ? numericScore
       : null;
-  var calls = parsed['function_calls'] is List
+  final calls = parsed['function_calls'] is List
       ? (parsed['function_calls'] as List)
       : [];
-  var isSuppressed = false;
-  if (calls.isEmpty &&
-      parsed['suppressed_calls'] is List &&
-      (parsed['suppressed_calls'] as List).isNotEmpty) {
-    calls = parsed['suppressed_calls'] as List;
-    isSuppressed = true;
-  }
+  final suppressed = parsed['suppressed_calls'] is List
+      ? (parsed['suppressed_calls'] as List)
+      : [];
   var reason = '';
-  if (isSuppressed) {
-    reason = 'Low model confidence. Review required.';
-  } else if (calls.isEmpty || transcript.trim().isEmpty) {
+  if (calls.isEmpty || transcript.trim().isEmpty) {
     reason = 'No actionable call. Review and choose what to save.';
   } else if (score == null || !score.isFinite || score < .1 || score > 1) {
     reason = 'Low or missing confidence. Review required.';
@@ -227,6 +221,19 @@ List<Draft> parseVoiceResult(Map<String, dynamic> result, DateTime reference) {
     reason = 'The model did not report success.';
   }
   if (calls.isEmpty) {
+    if (suppressed.isNotEmpty) {
+      // PRD rule: Suppressed calls are deliberately ignored; never promote them to actions.
+      return [
+        Draft(
+          title: '',
+          type: 'task',
+          originalTranscript: transcript,
+          referenceTime: reference,
+          confidence: score,
+          reviewReason: 'Suppressed calls are withheld. Review required.',
+        ),
+      ];
+    }
     return _smartExtractDrafts(transcript, reference, score);
   }
   return calls.map((call) {
@@ -252,7 +259,7 @@ List<Draft> parseVoiceResult(Map<String, dynamic> result, DateTime reference) {
       title: title,
       originalTranscript: transcript,
       referenceTime: reference,
-      confidence: score ?? (isSuppressed ? 0.05 : null),
+      confidence: score,
       body: type == 'idea'
           ? s('description')
           : type == 'shopping'
