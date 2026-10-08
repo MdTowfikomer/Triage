@@ -1,0 +1,50 @@
+# Antigravity & Agent artifacts
+.agents
+.backboard
+.spike-cache/
+
+# Sensitive credentials, secrets & keys
+**/config/passwords.yaml
+**/*.env
+**/*.env.*
+**/*.keystore
+**/*.jks
+**/google-services.json
+**/key.properties
+**/local.properties
+
+# Dart / Flutter build & packages
+**/.dart_tool/
+**/build/
+**/.flutter-plugins
+**/.flutter-plugins-dependencies
+**/.packages
+**/.pub-cache/
+**/.pub/
+
+# Android build outputs
+**/android/.gradle/
+**/android/local.properties
+**/android/app/build/
+**/android/captures/
+**/*.apk
+**/*.aab
+
+# Large binary model weights & audio cache
+**/*.cact
+**/*.wasm
+spike/web/vendor/
+spike/web/models/
+spike/assets/audio/
+spike/test-results/
+triage/triage_flutter/assets/voice_engine/models/
+triage/triage_flutter/assets/voice_engine/vendor/
+triage/triage_flutter/android/app/src/main/assets/flutter_assets/assets/voice_engine/models/
+triage/triage_flutter/android/app/src/main/assets/flutter_assets/assets/voice_engine/vendor/
+
+# IDE & OS
+.idea/
+.vscode/
+*.iml
+.DS_Store
+Thumbs.db
