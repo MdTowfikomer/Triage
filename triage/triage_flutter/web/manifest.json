@@ -1,0 +1,12 @@
+{
+    "name": "Triage",
+    "short_name": "Triage",
+    "start_url": ".",
+    "display": "standalone",
+    "background_color": "#0B0F17",
+    "theme_color": "#0B0F17",
+    "description": "A private voice inbox for everything on your mind.",
+    "orientation": "portrait-primary",
+    "prefer_related_applications": false,
+    "icons": [{"src":"icons/triage.svg","sizes":"any","type":"image/svg+xml","purpose":"any"}]
+}

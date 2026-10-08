@@ -1,0 +1,11 @@
+{
+  "recordedAt": "2026-10-07T20:32:35.034Z",
+  "browser": "131.0.6778.204",
+  "authOnly": true,
+  "screenshots": true,
+  "fakeMicrophone": false,
+  "externalRequests": [],
+  "errors": [],
+  "liveBackend": false,
+  "note": "Demo repository for visual/voice checks. Production auth visual-only; backend test suite verifies server operations."
+}

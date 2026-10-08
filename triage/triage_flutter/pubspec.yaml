@@ -1,0 +1,49 @@
+name: triage_flutter
+description: Triage privacy-first voice inbox.
+publish_to: 'none'
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.12.2
+
+resolution: workspace
+
+dependencies:
+  flutter:
+    sdk: flutter
+  triage_client:
+    path: ../triage_client
+  triage_spike:
+    path: ../../spike
+  serverpod_flutter: 4.0.4
+  serverpod_auth_core_flutter: 4.0.4
+  shared_preferences: ^2.5.4
+  flutter_local_notifications: ^22.3.1
+  permission_handler: ^12.0.3
+  record: ^7.1.1
+  flutter_timezone: ^5.1.1
+  timezone: ^0.11.0
+  intl: ^0.20.2
+  cupertino_icons: ^1.0.8
+
+dev_dependencies:
+  http: ^1.6.0
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/tools.json
+    - assets/voice_engine/
+    - assets/voice_engine/assets/
+    - assets/voice_engine/models/
+    - assets/voice_engine/vendor/
+  fonts:
+    - family: Inter
+      fonts:
+        - asset: assets/fonts/Inter.ttf
+    - family: TriageEmoji
+      fonts:
+        - asset: assets/fonts/NotoEmoji.ttf
