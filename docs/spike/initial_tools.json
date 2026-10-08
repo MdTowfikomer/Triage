@@ -1,0 +1,67 @@
+[
+  {
+    "name": "add_task",
+    "description": "Capture a to-do or work action, including emailing a person. Keep due_date as the user's relative phrase; do not calculate dates.",
+    "parameters": {
+      "type": "object", "additionalProperties": false,
+      "properties": {
+        "title": {"type": "string", "description": "Action to do"},
+        "priority": {"type": "string", "enum": ["low", "medium", "high"], "description": "Default medium if unspecified"},
+        "due_date": {"type": "string", "description": "Verbatim relative due date phrase, or empty string if absent"},
+        "assignee": {"type": "string", "description": "Who must do the task, or empty string if unspecified. Email recipients are not assignees."}
+      },
+      "required": ["title", "priority", "due_date", "assignee"]
+    }
+  },
+  {
+    "name": "add_note",
+    "description": "Capture observations, meeting outcomes, decisions, or information to remember.",
+    "parameters": {
+      "type": "object", "additionalProperties": false,
+      "properties": {
+        "title": {"type": "string", "description": "Short descriptive title"},
+        "body": {"type": "string", "description": "The observation with names and details preserved"},
+        "topic": {"type": "string", "description": "Short topic such as work, or empty string"}
+      },
+      "required": ["title", "body", "topic"]
+    }
+  },
+  {
+    "name": "add_reminder",
+    "description": "Capture an explicit request to remind the user to do something at a time. Preserve the relative time phrase.",
+    "parameters": {
+      "type": "object", "additionalProperties": false,
+      "properties": {
+        "title": {"type": "string", "description": "What to remind the user about"},
+        "remind_at": {"type": "string", "description": "Verbatim time phrase, e.g. tomorrow at 3pm; empty if absent. Do not calculate a date."},
+        "recurring": {"type": "string", "enum": ["none", "daily", "weekly"], "description": "Default none"}
+      },
+      "required": ["title", "remind_at", "recurring"]
+    }
+  },
+  {
+    "name": "add_shopping_item",
+    "description": "Add one item to a shopping list. Buying or grabbing groceries is shopping. Emit one call per distinct item, preserving the store for each.",
+    "parameters": {
+      "type": "object", "additionalProperties": false,
+      "properties": {
+        "item": {"type": "string", "description": "One grocery or shopping item"},
+        "quantity": {"type": "string", "description": "Quantity with units as spoken, or empty string if unspecified"},
+        "store": {"type": "string", "description": "Store name, or empty string if unspecified"}
+      },
+      "required": ["item", "quantity", "store"]
+    }
+  },
+  {
+    "name": "log_idea",
+    "description": "Capture a speculative suggestion, creative idea, or what-if question.",
+    "parameters": {
+      "type": "object", "additionalProperties": false,
+      "properties": {
+        "title": {"type": "string", "description": "Short idea title"},
+        "description": {"type": "string", "description": "The full idea"}
+      },
+      "required": ["title", "description"]
+    }
+  }
+]

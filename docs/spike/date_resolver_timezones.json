@@ -1,0 +1,101 @@
+{
+  "browser": "131.0.6778.204",
+  "rows": [
+    {
+      "zone": "UTC",
+      "passed": 9,
+      "checks": [
+        "local mode",
+        "UTC mode",
+        "date-only default",
+        "STT punctuation",
+        "elapsed duration",
+        "UTC instant localized before date arithmetic",
+        "UTC override",
+        "leap-day century rollover",
+        "unknown zone rejected"
+      ]
+    },
+    {
+      "zone": "Asia/Kolkata",
+      "passed": 11,
+      "checks": [
+        "local mode",
+        "UTC mode",
+        "date-only default",
+        "STT punctuation",
+        "elapsed duration",
+        "UTC instant localized before date arithmetic",
+        "UTC override",
+        "leap-day century rollover",
+        "unknown zone rejected",
+        "India UTC offset",
+        "India UTC conversion"
+      ]
+    },
+    {
+      "zone": "America/New_York",
+      "passed": 20,
+      "checks": [
+        "local mode",
+        "UTC mode",
+        "date-only default",
+        "STT punctuation",
+        "elapsed duration",
+        "UTC instant localized before date arithmetic",
+        "UTC override",
+        "leap-day century rollover",
+        "unknown zone rejected",
+        "spring calendar day is 23 elapsed hours",
+        "fall calendar day is 25 elapsed hours",
+        "spring elapsed day preserves 24 hours",
+        "fall elapsed day preserves 24 hours",
+        "spring gap rejected",
+        "fall overlap rejected",
+        "specific-date gap rejected",
+        "specific-date overlap rejected",
+        "weekday overlap rejected",
+        "past weekday gap rolls to valid next week",
+        "fall duration reaches precise second occurrence"
+      ]
+    },
+    {
+      "zone": "Australia/Lord_Howe",
+      "passed": 13,
+      "checks": [
+        "local mode",
+        "UTC mode",
+        "date-only default",
+        "STT punctuation",
+        "elapsed duration",
+        "UTC instant localized before date arithmetic",
+        "UTC override",
+        "leap-day century rollover",
+        "unknown zone rejected",
+        "half-hour spring calendar change",
+        "half-hour fall calendar change",
+        "half-hour gap rejected",
+        "half-hour overlap rejected"
+      ]
+    },
+    {
+      "zone": "Pacific/Apia",
+      "passed": 12,
+      "checks": [
+        "local mode",
+        "UTC mode",
+        "date-only default",
+        "STT punctuation",
+        "elapsed duration",
+        "UTC instant localized before date arithmetic",
+        "UTC override",
+        "leap-day century rollover",
+        "unknown zone rejected",
+        "skipped civil day rejected",
+        "explicit skipped civil date rejected",
+        "elapsed duration across skipped civil day"
+      ]
+    }
+  ],
+  "total_passed": 65
+}

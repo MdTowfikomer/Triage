@@ -1,0 +1,1058 @@
+{
+  "recorded_at": "2026-10-07T16:38:51.161Z",
+  "runtime": "Node v24.15.0 / official Needle WASM",
+  "platform": "win32 x64",
+  "cpu": "13th Gen Intel(R) Core(TM) i5-13450HX",
+  "model_manifest": [
+    {
+      "source": "https://huggingface.co/Cactus-Compute/needle3/resolve/2ae11323dc000f5e70c49f7403efa6af12ba9e67/wasm/needle.js",
+      "path": "web/vendor/needle.js",
+      "bytes": 63072,
+      "sha256": "964681b2a5ec3c4db2f06e45a5b60c8981a7d4ab4cac16ef6bf5b1988657a5f1"
+    },
+    {
+      "source": "https://huggingface.co/Cactus-Compute/needle3/resolve/2ae11323dc000f5e70c49f7403efa6af12ba9e67/wasm/needle.wasm",
+      "path": "web/vendor/needle.wasm",
+      "bytes": 923348,
+      "sha256": "c43f48e11f302087250d1e406024956781cd2f02595a5e343b3d7ddd5ef707fa"
+    },
+    {
+      "source": "https://huggingface.co/Cactus-Compute/needle3/resolve/2ae11323dc000f5e70c49f7403efa6af12ba9e67/needle3.cact",
+      "path": "web/models/needle3.cact",
+      "bytes": 35335380,
+      "sha256": "c9d915eca282ed42d1a09b143b592adb4cc6744ffe2d294adf5cfc5548170c38"
+    },
+    {
+      "source": "https://huggingface.co/Cactus-Compute/whistle/resolve/b358ddadd89b7a713b5aa131f23032d3cca1b251/whistle.cact",
+      "path": "web/models/whistle.cact",
+      "bytes": 16919407,
+      "sha256": "b6e02f048568ac5d01a2042556c658061e699acbc0aa2a1439f52f3d461dffeb"
+    }
+  ],
+  "tools_sha256": "c5b120a74effffdfc5b0c145e573bb445f02f6702e3b6878c4c4e038ccc44568",
+  "engine_wrapper_sha256": "0827b800a5642e89abbf77643b56a75517f0f4d7203c62e659c07d74922a92bb",
+  "audio_manifest": {
+    "kind": "synthetic speech, not human microphone recordings",
+    "voice": "Microsoft David Desktop",
+    "rate": 16000,
+    "channels": 1,
+    "bits": 16,
+    "utterances": [
+      "Remind me to call the dentist tomorrow at 3pm",
+      "Buy eggs, milk, and bread from Whole Foods",
+      "The client meeting went well, they approved the Q4 budget",
+      "Fix the login bug by Friday, high priority",
+      "What if we made the onboarding a game?",
+      "Um, so, email Sarah about the proposal, and oh, grab milk"
+    ]
+  },
+  "settings": {
+    "max_new_tokens": 512,
+    "language": "en",
+    "word_timestamps": true,
+    "stateless": true,
+    "splitting": false,
+    "prefix_tokens": 485,
+    "wasm_memory_bytes": 147587072,
+    "system": "locale: en-US"
+  },
+  "cold_start": {
+    "wasm_init_ms": 12.9129,
+    "model_load_ms": 262.0367,
+    "prefix_init_ms": 11743.0894
+  },
+  "rows": [
+    {
+      "id": 1,
+      "input": "Remind me to call the dentist tomorrow at 3pm",
+      "text": {
+        "raw": "{\"type\":\"call\",\"success\":true,\"error\":null,\"error_code\":null,\"reason\":null,\"function_calls\":[{\"name\":\"add_reminder\",\"arguments\":{\"title\":\"Call the dentist\",\"remind_at\":\"tomorrow at 3pm\"}}],\"suppressed_calls\":[],\"reasoning\":\"title 'call the dentist' from query; remind_at 'tomorrow at 3pm' from query; no recurring stated so omitted\",\"confidence\":0.2972,\"prefill_tps\":23.4,\"decode_tps\":18.5,\"peak_ram_mb\":-2097151.9,\"validation\":{\"ungrounded\":[],\"negation\":false}}",
+        "parsed": {
+          "type": "call",
+          "success": true,
+          "error": null,
+          "error_code": null,
+          "reason": null,
+          "function_calls": [
+            {
+              "name": "add_reminder",
+              "arguments": {
+                "title": "Call the dentist",
+                "remind_at": "tomorrow at 3pm"
+              }
+            }
+          ],
+          "suppressed_calls": [],
+          "reasoning": "title 'call the dentist' from query; remind_at 'tomorrow at 3pm' from query; no recurring stated so omitted",
+          "confidence": 0.2972,
+          "prefill_tps": 23.4,
+          "decode_tps": 18.5,
+          "peak_ram_mb": -2097151.9,
+          "validation": {
+            "ungrounded": [],
+            "negation": false
+          }
+        },
+        "latency_ms": 4067.6569,
+        "schema": {
+          "valid": true,
+          "errors": []
+        }
+      },
+      "audio": {
+        "source": "audio",
+        "transcript": "Remind me to call the dentist tomorrow at 3 p.m.",
+        "stt": {
+          "raw": "{\"text\":\"Remind me to call the dentist tomorrow at 3 p.m.\",\"language\":\"en\",\"words\":[{\"word\":\"Remind\",\"start\":0.16,\"end\":0.56,\"probability\":0.934},{\"word\":\"me\",\"start\":0.56,\"end\":0.72,\"probability\":0.999},{\"word\":\"to\",\"start\":0.72,\"end\":0.88,\"probability\":0.999},{\"word\":\"call\",\"start\":0.88,\"end\":1.12,\"probability\":1.000},{\"word\":\"the\",\"start\":1.12,\"end\":1.28,\"probability\":0.993},{\"word\":\"dentist\",\"start\":1.28,\"end\":1.52,\"probability\":0.968},{\"word\":\"tomorrow\",\"start\":1.52,\"end\":2.08,\"probability\":0.590},{\"word\":\"at\",\"start\":2.08,\"end\":2.24,\"probability\":1.000},{\"word\":\"3\",\"start\":2.24,\"end\":2.56,\"probability\":0.969},{\"word\":\"p.m.\",\"start\":2.56,\"end\":3.04,\"probability\":0.952}],\"ttft_ms\":778.8,\"decode_tps\":14.9}",
+          "parsed": {
+            "text": "Remind me to call the dentist tomorrow at 3 p.m.",
+            "language": "en",
+            "words": [
+              {
+                "word": "Remind",
+                "start": 0.16,
+                "end": 0.56,
+                "probability": 0.934
+              },
+              {
+                "word": "me",
+                "start": 0.56,
+                "end": 0.72,
+                "probability": 0.999
+              },
+              {
+                "word": "to",
+                "start": 0.72,
+                "end": 0.88,
+                "probability": 0.999
+              },
+              {
+                "word": "call",
+                "start": 0.88,
+                "end": 1.12,
+                "probability": 1
+              },
+              {
+                "word": "the",
+                "start": 1.12,
+                "end": 1.28,
+                "probability": 0.993
+              },
+              {
+                "word": "dentist",
+                "start": 1.28,
+                "end": 1.52,
+                "probability": 0.968
+              },
+              {
+                "word": "tomorrow",
+                "start": 1.52,
+                "end": 2.08,
+                "probability": 0.59
+              },
+              {
+                "word": "at",
+                "start": 2.08,
+                "end": 2.24,
+                "probability": 1
+              },
+              {
+                "word": "3",
+                "start": 2.24,
+                "end": 2.56,
+                "probability": 0.969
+              },
+              {
+                "word": "p.m.",
+                "start": 2.56,
+                "end": 3.04,
+                "probability": 0.952
+              }
+            ],
+            "ttft_ms": 778.8,
+            "decode_tps": 14.9
+          },
+          "latency_ms": 2103.873700000002,
+          "duration_ms": 3840
+        },
+        "routing": {
+          "raw": "{\"type\":\"call\",\"success\":true,\"error\":null,\"error_code\":null,\"reason\":null,\"function_calls\":[{\"name\":\"add_reminder\",\"arguments\":{\"title\":\"Call the dentist\",\"remind_at\":\"tomorrow at 3 p.m.\"}}],\"suppressed_calls\":[],\"reasoning\":\"title 'call the dentist' from query; remind_at 'tomorrow at 3 p.m.' from query; no recurring stated so omitted.\",\"confidence\":0.1566,\"prefill_tps\":21.8,\"decode_tps\":18.6,\"peak_ram_mb\":-2097151.9,\"validation\":{\"ungrounded\":[],\"negation\":false}}",
+          "parsed": {
+            "type": "call",
+            "success": true,
+            "error": null,
+            "error_code": null,
+            "reason": null,
+            "function_calls": [
+              {
+                "name": "add_reminder",
+                "arguments": {
+                  "title": "Call the dentist",
+                  "remind_at": "tomorrow at 3 p.m."
+                }
+              }
+            ],
+            "suppressed_calls": [],
+            "reasoning": "title 'call the dentist' from query; remind_at 'tomorrow at 3 p.m.' from query; no recurring stated so omitted.",
+            "confidence": 0.1566,
+            "prefill_tps": 21.8,
+            "decode_tps": 18.6,
+            "peak_ram_mb": -2097151.9,
+            "validation": {
+              "ungrounded": [],
+              "negation": false
+            }
+          },
+          "latency_ms": 4509.9547999999995,
+          "schema": {
+            "valid": true,
+            "errors": []
+          }
+        },
+        "total_latency_ms": 6618.062399999999
+      },
+      "audio_sha256": "b91663f724686e3c14473c34a27c1d3c933e5ffcda51a5f5c164b968fe5e85e1"
+    },
+    {
+      "id": 2,
+      "input": "Buy eggs, milk, and bread from Whole Foods",
+      "text": {
+        "raw": "{\"type\":\"call\",\"success\":true,\"error\":null,\"error_code\":null,\"reason\":null,\"function_calls\":[],\"suppressed_calls\":[{\"name\":\"add_shopping_item\",\"arguments\":{\"item\":\"eggs\",\"quantity\":\"bread\"}},{\"name\":\"add_shopping_item\",\"arguments\":{\"item\":\"milk\",\"quantity\":\"bread\"}},{\"name\":\"add_shopping_item\",\"arguments\":{\"item\":\"bread\",\"quantity\":\"bread\"}}],\"reasoning\":\"Three items: eggs, milk, bread. Add_shopping_item called twice.\",\"confidence\":0.0172,\"prefill_tps\":22.1,\"decode_tps\":19.6,\"peak_ram_mb\":-2097151.9,\"validation\":{\"ungrounded\":[],\"negation\":false}}",
+        "parsed": {
+          "type": "call",
+          "success": true,
+          "error": null,
+          "error_code": null,
+          "reason": null,
+          "function_calls": [],
+          "suppressed_calls": [
+            {
+              "name": "add_shopping_item",
+              "arguments": {
+                "item": "eggs",
+                "quantity": "bread"
+              }
+            },
+            {
+              "name": "add_shopping_item",
+              "arguments": {
+                "item": "milk",
+                "quantity": "bread"
+              }
+            },
+            {
+              "name": "add_shopping_item",
+              "arguments": {
+                "item": "bread",
+                "quantity": "bread"
+              }
+            }
+          ],
+          "reasoning": "Three items: eggs, milk, bread. Add_shopping_item called twice.",
+          "confidence": 0.0172,
+          "prefill_tps": 22.1,
+          "decode_tps": 19.6,
+          "peak_ram_mb": -2097151.9,
+          "validation": {
+            "ungrounded": [],
+            "negation": false
+          }
+        },
+        "latency_ms": 5887.981899999999,
+        "schema": {
+          "valid": false,
+          "errors": [
+            "No actionable function calls"
+          ]
+        }
+      },
+      "audio": {
+        "source": "audio",
+        "transcript": "By eggs, milk, and bread from whole foods.",
+        "stt": {
+          "raw": "{\"text\":\"By eggs, milk, and bread from whole foods.\",\"language\":\"en\",\"words\":[{\"word\":\"By\",\"start\":0.16,\"end\":0.40,\"probability\":0.480},{\"word\":\"eggs,\",\"start\":0.40,\"end\":0.88,\"probability\":0.946},{\"word\":\"milk,\",\"start\":1.28,\"end\":1.52,\"probability\":0.998},{\"word\":\"and\",\"start\":2.00,\"end\":2.16,\"probability\":0.995},{\"word\":\"bread\",\"start\":2.16,\"end\":2.40,\"probability\":0.996},{\"word\":\"from\",\"start\":2.40,\"end\":2.64,\"probability\":0.994},{\"word\":\"whole\",\"start\":2.64,\"end\":2.88,\"probability\":0.786},{\"word\":\"foods.\",\"start\":2.88,\"end\":3.28,\"probability\":0.991}],\"ttft_ms\":793.6,\"decode_tps\":14.9}",
+          "parsed": {
+            "text": "By eggs, milk, and bread from whole foods.",
+            "language": "en",
+            "words": [
+              {
+                "word": "By",
+                "start": 0.16,
+                "end": 0.4,
+                "probability": 0.48
+              },
+              {
+                "word": "eggs,",
+                "start": 0.4,
+                "end": 0.88,
+                "probability": 0.946
+              },
+              {
+                "word": "milk,",
+                "start": 1.28,
+                "end": 1.52,
+                "probability": 0.998
+              },
+              {
+                "word": "and",
+                "start": 2,
+                "end": 2.16,
+                "probability": 0.995
+              },
+              {
+                "word": "bread",
+                "start": 2.16,
+                "end": 2.4,
+                "probability": 0.996
+              },
+              {
+                "word": "from",
+                "start": 2.4,
+                "end": 2.64,
+                "probability": 0.994
+              },
+              {
+                "word": "whole",
+                "start": 2.64,
+                "end": 2.88,
+                "probability": 0.786
+              },
+              {
+                "word": "foods.",
+                "start": 2.88,
+                "end": 3.28,
+                "probability": 0.991
+              }
+            ],
+            "ttft_ms": 793.6,
+            "decode_tps": 14.9
+          },
+          "latency_ms": 1889.3381000000008,
+          "duration_ms": 4160
+        },
+        "routing": {
+          "raw": "{\"type\":\"call\",\"success\":true,\"error\":null,\"error_code\":null,\"reason\":null,\"function_calls\":[],\"suppressed_calls\":[{\"name\":\"add_shopping_item\",\"arguments\":{\"item\":\"eggs\",\"quantity\":\"bread\"}},{\"name\":\"add_shopping_item\",\"arguments\":{\"item\":\"milk\",\"quantity\":\"bread\"}},{\"name\":\"add_shopping_item\",\"arguments\":{\"item\":\"bread\",\"quantity\":\"bread\"}}],\"reasoning\":\"Three items: eggs, milk, bread. add_shopping_item called twice.\",\"confidence\":0.0115,\"prefill_tps\":21.2,\"decode_tps\":19.0,\"peak_ram_mb\":-2097151.9,\"validation\":{\"ungrounded\":[],\"negation\":false}}",
+          "parsed": {
+            "type": "call",
+            "success": true,
+            "error": null,
+            "error_code": null,
+            "reason": null,
+            "function_calls": [],
+            "suppressed_calls": [
+              {
+                "name": "add_shopping_item",
+                "arguments": {
+                  "item": "eggs",
+                  "quantity": "bread"
+                }
+              },
+              {
+                "name": "add_shopping_item",
+                "arguments": {
+                  "item": "milk",
+                  "quantity": "bread"
+                }
+              },
+              {
+                "name": "add_shopping_item",
+                "arguments": {
+                  "item": "bread",
+                  "quantity": "bread"
+                }
+              }
+            ],
+            "reasoning": "Three items: eggs, milk, bread. add_shopping_item called twice.",
+            "confidence": 0.0115,
+            "prefill_tps": 21.2,
+            "decode_tps": 19,
+            "peak_ram_mb": -2097151.9,
+            "validation": {
+              "ungrounded": [],
+              "negation": false
+            }
+          },
+          "latency_ms": 5906.3436,
+          "schema": {
+            "valid": false,
+            "errors": [
+              "No actionable function calls"
+            ]
+          }
+        },
+        "total_latency_ms": 7801.231100000001
+      },
+      "audio_sha256": "769160525054315649c0661255a14327c5e07b3fc52f77afe2cebc396062bda3"
+    },
+    {
+      "id": 3,
+      "input": "The client meeting went well, they approved the Q4 budget",
+      "text": {
+        "raw": "{\"type\":\"call\",\"success\":true,\"error\":null,\"error_code\":null,\"reason\":null,\"function_calls\":[],\"suppressed_calls\":[{\"name\":\"add_task\",\"arguments\":{\"title\":\"Client meeting went well\"}}],\"reasoning\":\"'client meeting went well' -> add_task title 'client meeting went well'; 'approved the Q4 budget' -> due_date 'next Friday' -> 'next Friday'; priority and assignee omitted.\",\"confidence\":0.0052,\"prefill_tps\":20.5,\"decode_tps\":14.0,\"peak_ram_mb\":-2097151.9,\"validation\":{\"ungrounded\":[],\"negation\":false}}",
+        "parsed": {
+          "type": "call",
+          "success": true,
+          "error": null,
+          "error_code": null,
+          "reason": null,
+          "function_calls": [],
+          "suppressed_calls": [
+            {
+              "name": "add_task",
+              "arguments": {
+                "title": "Client meeting went well"
+              }
+            }
+          ],
+          "reasoning": "'client meeting went well' -> add_task title 'client meeting went well'; 'approved the Q4 budget' -> due_date 'next Friday' -> 'next Friday'; priority and assignee omitted.",
+          "confidence": 0.0052,
+          "prefill_tps": 20.5,
+          "decode_tps": 14,
+          "peak_ram_mb": -2097151.9,
+          "validation": {
+            "ungrounded": [],
+            "negation": false
+          }
+        },
+        "latency_ms": 6694.637299999995,
+        "schema": {
+          "valid": false,
+          "errors": [
+            "No actionable function calls"
+          ]
+        }
+      },
+      "audio": {
+        "source": "audio",
+        "transcript": "The client meeting went well. They approved the Q4 budget.",
+        "stt": {
+          "raw": "{\"text\":\"The client meeting went well. They approved the Q4 budget.\",\"language\":\"en\",\"words\":[{\"word\":\"The\",\"start\":0.16,\"end\":0.32,\"probability\":0.915},{\"word\":\"client\",\"start\":0.32,\"end\":0.56,\"probability\":0.972},{\"word\":\"meeting\",\"start\":0.56,\"end\":0.96,\"probability\":0.988},{\"word\":\"went\",\"start\":0.96,\"end\":1.28,\"probability\":0.999},{\"word\":\"well.\",\"start\":1.28,\"end\":1.52,\"probability\":0.999},{\"word\":\"They\",\"start\":2.00,\"end\":2.16,\"probability\":0.994},{\"word\":\"approved\",\"start\":2.16,\"end\":2.56,\"probability\":0.998},{\"word\":\"the\",\"start\":2.56,\"end\":2.72,\"probability\":0.994},{\"word\":\"Q4\",\"start\":2.72,\"end\":3.12,\"probability\":0.767},{\"word\":\"budget.\",\"start\":3.12,\"end\":3.52,\"probability\":0.965}],\"ttft_ms\":940.9,\"decode_tps\":15.3}",
+          "parsed": {
+            "text": "The client meeting went well. They approved the Q4 budget.",
+            "language": "en",
+            "words": [
+              {
+                "word": "The",
+                "start": 0.16,
+                "end": 0.32,
+                "probability": 0.915
+              },
+              {
+                "word": "client",
+                "start": 0.32,
+                "end": 0.56,
+                "probability": 0.972
+              },
+              {
+                "word": "meeting",
+                "start": 0.56,
+                "end": 0.96,
+                "probability": 0.988
+              },
+              {
+                "word": "went",
+                "start": 0.96,
+                "end": 1.28,
+                "probability": 0.999
+              },
+              {
+                "word": "well.",
+                "start": 1.28,
+                "end": 1.52,
+                "probability": 0.999
+              },
+              {
+                "word": "They",
+                "start": 2,
+                "end": 2.16,
+                "probability": 0.994
+              },
+              {
+                "word": "approved",
+                "start": 2.16,
+                "end": 2.56,
+                "probability": 0.998
+              },
+              {
+                "word": "the",
+                "start": 2.56,
+                "end": 2.72,
+                "probability": 0.994
+              },
+              {
+                "word": "Q4",
+                "start": 2.72,
+                "end": 3.12,
+                "probability": 0.767
+              },
+              {
+                "word": "budget.",
+                "start": 3.12,
+                "end": 3.52,
+                "probability": 0.965
+              }
+            ],
+            "ttft_ms": 940.9,
+            "decode_tps": 15.3
+          },
+          "latency_ms": 2094.272100000002,
+          "duration_ms": 4275
+        },
+        "routing": {
+          "raw": "{\"type\":\"call\",\"success\":true,\"error\":null,\"error_code\":null,\"reason\":null,\"function_calls\":[],\"suppressed_calls\":[{\"name\":\"add_task\",\"arguments\":{\"title\":\"Q4 budget approved\",\"priority\":\"high\"}}],\"reasoning\":\"'approved the Q4 budget' -> add_task with title 'Q4 budget approved', priority 'high' from 'approved'.\",\"confidence\":0.0139,\"prefill_tps\":20.0,\"decode_tps\":13.9,\"peak_ram_mb\":-2097151.9,\"validation\":{\"ungrounded\":[\"add_task.title\"],\"negation\":false}}",
+          "parsed": {
+            "type": "call",
+            "success": true,
+            "error": null,
+            "error_code": null,
+            "reason": null,
+            "function_calls": [],
+            "suppressed_calls": [
+              {
+                "name": "add_task",
+                "arguments": {
+                  "title": "Q4 budget approved",
+                  "priority": "high"
+                }
+              }
+            ],
+            "reasoning": "'approved the Q4 budget' -> add_task with title 'Q4 budget approved', priority 'high' from 'approved'.",
+            "confidence": 0.0139,
+            "prefill_tps": 20,
+            "decode_tps": 13.9,
+            "peak_ram_mb": -2097151.9,
+            "validation": {
+              "ungrounded": [
+                "add_task.title"
+              ],
+              "negation": false
+            }
+          },
+          "latency_ms": 5471.2528999999995,
+          "schema": {
+            "valid": false,
+            "errors": [
+              "No actionable function calls",
+              "Engine flagged ungrounded arguments"
+            ]
+          }
+        },
+        "total_latency_ms": 7575.930700000004
+      },
+      "audio_sha256": "dc34a075a8ad55b91d5cd9495de729aa825cb14d37fe385f4759e56cb0397ca9"
+    },
+    {
+      "id": 4,
+      "input": "Fix the login bug by Friday, high priority",
+      "text": {
+        "raw": "{\"type\":\"call\",\"success\":true,\"error\":null,\"error_code\":null,\"reason\":null,\"function_calls\":[],\"suppressed_calls\":[{\"name\":\"add_task\",\"arguments\":{\"title\":\"Login bug\",\"priority\":\"high\",\"due_date\":\"Friday\"}}],\"reasoning\":\"title 'login bug' from query; priority 'high' from 'high priority'; due_date 'Friday' from phrase; assignee omitted.\",\"confidence\":0.0941,\"prefill_tps\":9.1,\"decode_tps\":12.0,\"peak_ram_mb\":-2097151.9,\"validation\":{\"ungrounded\":[],\"negation\":false}}",
+        "parsed": {
+          "type": "call",
+          "success": true,
+          "error": null,
+          "error_code": null,
+          "reason": null,
+          "function_calls": [],
+          "suppressed_calls": [
+            {
+              "name": "add_task",
+              "arguments": {
+                "title": "Login bug",
+                "priority": "high",
+                "due_date": "Friday"
+              }
+            }
+          ],
+          "reasoning": "title 'login bug' from query; priority 'high' from 'high priority'; due_date 'Friday' from phrase; assignee omitted.",
+          "confidence": 0.0941,
+          "prefill_tps": 9.1,
+          "decode_tps": 12,
+          "peak_ram_mb": -2097151.9,
+          "validation": {
+            "ungrounded": [],
+            "negation": false
+          }
+        },
+        "latency_ms": 7989.5124,
+        "schema": {
+          "valid": false,
+          "errors": [
+            "No actionable function calls"
+          ]
+        }
+      },
+      "audio": {
+        "source": "audio",
+        "transcript": "Fix the login bug by Friday. High Priority.",
+        "stt": {
+          "raw": "{\"text\":\"Fix the login bug by Friday. High Priority.\",\"language\":\"en\",\"words\":[{\"word\":\"Fix\",\"start\":0.24,\"end\":0.48,\"probability\":0.766},{\"word\":\"the\",\"start\":0.48,\"end\":0.72,\"probability\":0.958},{\"word\":\"login\",\"start\":0.72,\"end\":0.96,\"probability\":0.832},{\"word\":\"bug\",\"start\":0.96,\"end\":1.20,\"probability\":0.977},{\"word\":\"by\",\"start\":1.20,\"end\":1.44,\"probability\":0.986},{\"word\":\"Friday.\",\"start\":1.44,\"end\":1.92,\"probability\":0.894},{\"word\":\"High\",\"start\":2.40,\"end\":2.64,\"probability\":0.158},{\"word\":\"Priority.\",\"start\":2.64,\"end\":3.12,\"probability\":0.727}],\"ttft_ms\":541.0,\"decode_tps\":18.9}",
+          "parsed": {
+            "text": "Fix the login bug by Friday. High Priority.",
+            "language": "en",
+            "words": [
+              {
+                "word": "Fix",
+                "start": 0.24,
+                "end": 0.48,
+                "probability": 0.766
+              },
+              {
+                "word": "the",
+                "start": 0.48,
+                "end": 0.72,
+                "probability": 0.958
+              },
+              {
+                "word": "login",
+                "start": 0.72,
+                "end": 0.96,
+                "probability": 0.832
+              },
+              {
+                "word": "bug",
+                "start": 0.96,
+                "end": 1.2,
+                "probability": 0.977
+              },
+              {
+                "word": "by",
+                "start": 1.2,
+                "end": 1.44,
+                "probability": 0.986
+              },
+              {
+                "word": "Friday.",
+                "start": 1.44,
+                "end": 1.92,
+                "probability": 0.894
+              },
+              {
+                "word": "High",
+                "start": 2.4,
+                "end": 2.64,
+                "probability": 0.158
+              },
+              {
+                "word": "Priority.",
+                "start": 2.64,
+                "end": 3.12,
+                "probability": 0.727
+              }
+            ],
+            "ttft_ms": 541,
+            "decode_tps": 18.9
+          },
+          "latency_ms": 1547.1462000000029,
+          "duration_ms": 3950
+        },
+        "routing": {
+          "raw": "{\"type\":\"call\",\"success\":true,\"error\":null,\"error_code\":null,\"reason\":null,\"function_calls\":[],\"suppressed_calls\":[{\"name\":\"add_task\",\"arguments\":{\"title\":\"Fix the login bug\",\"priority\":\"high\",\"due_date\":\"Friday\"}}],\"reasoning\":\"title 'Fix the login bug' from query; priority 'high' from 'high Priority'; due_date 'Friday' from phrase; assignee omitted.\",\"confidence\":0.0403,\"prefill_tps\":28.8,\"decode_tps\":23.2,\"peak_ram_mb\":-2097151.9,\"validation\":{\"ungrounded\":[],\"negation\":false}}",
+          "parsed": {
+            "type": "call",
+            "success": true,
+            "error": null,
+            "error_code": null,
+            "reason": null,
+            "function_calls": [],
+            "suppressed_calls": [
+              {
+                "name": "add_task",
+                "arguments": {
+                  "title": "Fix the login bug",
+                  "priority": "high",
+                  "due_date": "Friday"
+                }
+              }
+            ],
+            "reasoning": "title 'Fix the login bug' from query; priority 'high' from 'high Priority'; due_date 'Friday' from phrase; assignee omitted.",
+            "confidence": 0.0403,
+            "prefill_tps": 28.8,
+            "decode_tps": 23.2,
+            "peak_ram_mb": -2097151.9,
+            "validation": {
+              "ungrounded": [],
+              "negation": false
+            }
+          },
+          "latency_ms": 4096.8164999999935,
+          "schema": {
+            "valid": false,
+            "errors": [
+              "No actionable function calls"
+            ]
+          }
+        },
+        "total_latency_ms": 5645.423199999997
+      },
+      "audio_sha256": "6018b132c84b95e89d258c7e57c2eda9db086235d6fb66b758b5a49c748ae8fd"
+    },
+    {
+      "id": 5,
+      "input": "What if we made the onboarding a game?",
+      "text": {
+        "raw": "{\"type\":\"call\",\"success\":true,\"error\":null,\"error_code\":null,\"reason\":null,\"function_calls\":[],\"suppressed_calls\":[{\"name\":\"add_task\",\"arguments\":{\"title\":\"Onboarding a game\",\"priority\":\"medium\"}}],\"reasoning\":\"'what if we made the onboarding a game' -> add_task with title 'onboarding a game', priority 'medium' (default), due_date and assignee omitted.\",\"confidence\":0.0162,\"prefill_tps\":25.0,\"decode_tps\":24.6,\"peak_ram_mb\":-2097151.9,\"validation\":{\"ungrounded\":[],\"negation\":false}}",
+        "parsed": {
+          "type": "call",
+          "success": true,
+          "error": null,
+          "error_code": null,
+          "reason": null,
+          "function_calls": [],
+          "suppressed_calls": [
+            {
+              "name": "add_task",
+              "arguments": {
+                "title": "Onboarding a game",
+                "priority": "medium"
+              }
+            }
+          ],
+          "reasoning": "'what if we made the onboarding a game' -> add_task with title 'onboarding a game', priority 'medium' (default), due_date and assignee omitted.",
+          "confidence": 0.0162,
+          "prefill_tps": 25,
+          "decode_tps": 24.6,
+          "peak_ram_mb": -2097151.9,
+          "validation": {
+            "ungrounded": [],
+            "negation": false
+          }
+        },
+        "latency_ms": 3564.7860000000073,
+        "schema": {
+          "valid": false,
+          "errors": [
+            "No actionable function calls"
+          ]
+        }
+      },
+      "audio": {
+        "source": "audio",
+        "transcript": "What if we made the onboarding a game?",
+        "stt": {
+          "raw": "{\"text\":\"What if we made the onboarding a game?\",\"language\":\"en\",\"words\":[{\"word\":\"What\",\"start\":0.16,\"end\":0.32,\"probability\":0.895},{\"word\":\"if\",\"start\":0.32,\"end\":0.56,\"probability\":0.981},{\"word\":\"we\",\"start\":0.56,\"end\":0.72,\"probability\":0.999},{\"word\":\"made\",\"start\":0.72,\"end\":0.88,\"probability\":0.996},{\"word\":\"the\",\"start\":0.88,\"end\":1.04,\"probability\":0.992},{\"word\":\"onboarding\",\"start\":1.04,\"end\":1.52,\"probability\":0.920},{\"word\":\"a\",\"start\":1.52,\"end\":1.68,\"probability\":0.968},{\"word\":\"game?\",\"start\":1.68,\"end\":1.84,\"probability\":0.999}],\"ttft_ms\":465.5,\"decode_tps\":21.2}",
+          "parsed": {
+            "text": "What if we made the onboarding a game?",
+            "language": "en",
+            "words": [
+              {
+                "word": "What",
+                "start": 0.16,
+                "end": 0.32,
+                "probability": 0.895
+              },
+              {
+                "word": "if",
+                "start": 0.32,
+                "end": 0.56,
+                "probability": 0.981
+              },
+              {
+                "word": "we",
+                "start": 0.56,
+                "end": 0.72,
+                "probability": 0.999
+              },
+              {
+                "word": "made",
+                "start": 0.72,
+                "end": 0.88,
+                "probability": 0.996
+              },
+              {
+                "word": "the",
+                "start": 0.88,
+                "end": 1.04,
+                "probability": 0.992
+              },
+              {
+                "word": "onboarding",
+                "start": 1.04,
+                "end": 1.52,
+                "probability": 0.92
+              },
+              {
+                "word": "a",
+                "start": 1.52,
+                "end": 1.68,
+                "probability": 0.968
+              },
+              {
+                "word": "game?",
+                "start": 1.68,
+                "end": 1.84,
+                "probability": 0.999
+              }
+            ],
+            "ttft_ms": 465.5,
+            "decode_tps": 21.2
+          },
+          "latency_ms": 1119.6103000000003,
+          "duration_ms": 2670
+        },
+        "routing": {
+          "raw": "{\"type\":\"call\",\"success\":true,\"error\":null,\"error_code\":null,\"reason\":null,\"function_calls\":[],\"suppressed_calls\":[{\"name\":\"add_task\",\"arguments\":{\"title\":\"Onboarding a game\",\"priority\":\"medium\"}}],\"reasoning\":\"'what if we made the onboarding a game' -> add_task with title 'onboarding a game', priority 'medium' (default), due_date and assignee omitted.\",\"confidence\":0.0162,\"prefill_tps\":28.8,\"decode_tps\":22.7,\"peak_ram_mb\":-2097151.9,\"validation\":{\"ungrounded\":[],\"negation\":false}}",
+          "parsed": {
+            "type": "call",
+            "success": true,
+            "error": null,
+            "error_code": null,
+            "reason": null,
+            "function_calls": [],
+            "suppressed_calls": [
+              {
+                "name": "add_task",
+                "arguments": {
+                  "title": "Onboarding a game",
+                  "priority": "medium"
+                }
+              }
+            ],
+            "reasoning": "'what if we made the onboarding a game' -> add_task with title 'onboarding a game', priority 'medium' (default), due_date and assignee omitted.",
+            "confidence": 0.0162,
+            "prefill_tps": 28.8,
+            "decode_tps": 22.7,
+            "peak_ram_mb": -2097151.9,
+            "validation": {
+              "ungrounded": [],
+              "negation": false
+            }
+          },
+          "latency_ms": 3720.5688999999984,
+          "schema": {
+            "valid": false,
+            "errors": [
+              "No actionable function calls"
+            ]
+          }
+        },
+        "total_latency_ms": 4842.088199999998
+      },
+      "audio_sha256": "9ee4bdf11d276766a6c97d5811d505a92f8e94e5f891a24ca25cf1af8d39b4ca"
+    },
+    {
+      "id": 6,
+      "input": "Um, so, email Sarah about the proposal, and oh, grab milk",
+      "text": {
+        "raw": "{\"type\":\"call\",\"success\":true,\"error\":null,\"error_code\":null,\"reason\":null,\"function_calls\":[],\"suppressed_calls\":[{\"name\":\"add_task\",\"arguments\":{\"title\":\"Proposal\",\"priority\":\"medium\"}},{\"name\":\"add_shopping_item\",\"arguments\":{\"item\":\"milk\"}}],\"reasoning\":\"'email Sarah about the proposal' -> add_task title 'proposal', priority 'medium'; 'grab milk' -> add_shopping_item item 'milk'\",\"confidence\":0.0438,\"prefill_tps\":28.6,\"decode_tps\":21.0,\"peak_ram_mb\":-2097151.9,\"validation\":{\"ungrounded\":[],\"negation\":false}}",
+        "parsed": {
+          "type": "call",
+          "success": true,
+          "error": null,
+          "error_code": null,
+          "reason": null,
+          "function_calls": [],
+          "suppressed_calls": [
+            {
+              "name": "add_task",
+              "arguments": {
+                "title": "Proposal",
+                "priority": "medium"
+              }
+            },
+            {
+              "name": "add_shopping_item",
+              "arguments": {
+                "item": "milk"
+              }
+            }
+          ],
+          "reasoning": "'email Sarah about the proposal' -> add_task title 'proposal', priority 'medium'; 'grab milk' -> add_shopping_item item 'milk'",
+          "confidence": 0.0438,
+          "prefill_tps": 28.6,
+          "decode_tps": 21,
+          "peak_ram_mb": -2097151.9,
+          "validation": {
+            "ungrounded": [],
+            "negation": false
+          }
+        },
+        "latency_ms": 5088.743600000002,
+        "schema": {
+          "valid": false,
+          "errors": [
+            "No actionable function calls"
+          ]
+        }
+      },
+      "audio": {
+        "source": "audio",
+        "transcript": "Um, so, email Sarah about the proposal, and oh, grab milk.",
+        "stt": {
+          "raw": "{\"text\":\"Um, so, email Sarah about the proposal, and oh, grab milk.\",\"language\":\"en\",\"words\":[{\"word\":\"Um,\",\"start\":0.24,\"end\":0.64,\"probability\":0.491},{\"word\":\"so,\",\"start\":0.88,\"end\":1.28,\"probability\":0.948},{\"word\":\"email\",\"start\":1.68,\"end\":2.00,\"probability\":0.733},{\"word\":\"Sarah\",\"start\":2.00,\"end\":2.40,\"probability\":0.731},{\"word\":\"about\",\"start\":2.40,\"end\":2.64,\"probability\":0.993},{\"word\":\"the\",\"start\":2.64,\"end\":2.88,\"probability\":0.994},{\"word\":\"proposal,\",\"start\":2.88,\"end\":3.52,\"probability\":0.987},{\"word\":\"and\",\"start\":3.84,\"end\":4.00,\"probability\":0.766},{\"word\":\"oh,\",\"start\":4.00,\"end\":4.72,\"probability\":0.745},{\"word\":\"grab\",\"start\":4.72,\"end\":4.96,\"probability\":0.811},{\"word\":\"milk.\",\"start\":4.96,\"end\":5.20,\"probability\":0.939}],\"ttft_ms\":1073.4,\"decode_tps\":16.2}",
+          "parsed": {
+            "text": "Um, so, email Sarah about the proposal, and oh, grab milk.",
+            "language": "en",
+            "words": [
+              {
+                "word": "Um,",
+                "start": 0.24,
+                "end": 0.64,
+                "probability": 0.491
+              },
+              {
+                "word": "so,",
+                "start": 0.88,
+                "end": 1.28,
+                "probability": 0.948
+              },
+              {
+                "word": "email",
+                "start": 1.68,
+                "end": 2,
+                "probability": 0.733
+              },
+              {
+                "word": "Sarah",
+                "start": 2,
+                "end": 2.4,
+                "probability": 0.731
+              },
+              {
+                "word": "about",
+                "start": 2.4,
+                "end": 2.64,
+                "probability": 0.993
+              },
+              {
+                "word": "the",
+                "start": 2.64,
+                "end": 2.88,
+                "probability": 0.994
+              },
+              {
+                "word": "proposal,",
+                "start": 2.88,
+                "end": 3.52,
+                "probability": 0.987
+              },
+              {
+                "word": "and",
+                "start": 3.84,
+                "end": 4,
+                "probability": 0.766
+              },
+              {
+                "word": "oh,",
+                "start": 4,
+                "end": 4.72,
+                "probability": 0.745
+              },
+              {
+                "word": "grab",
+                "start": 4.72,
+                "end": 4.96,
+                "probability": 0.811
+              },
+              {
+                "word": "milk.",
+                "start": 4.96,
+                "end": 5.2,
+                "probability": 0.939
+              }
+            ],
+            "ttft_ms": 1073.4,
+            "decode_tps": 16.2
+          },
+          "latency_ms": 2708.561799999996,
+          "duration_ms": 6010
+        },
+        "routing": {
+          "raw": "{\"type\":\"call\",\"success\":true,\"error\":null,\"error_code\":null,\"reason\":null,\"function_calls\":[],\"suppressed_calls\":[{\"name\":\"add_task\",\"arguments\":{\"title\":\"Proposal\",\"priority\":\"medium\",\"assignee\":\"Sarah\"}},{\"name\":\"add_shopping_item\",\"arguments\":{\"item\":\"milk\"}}],\"reasoning\":\"'email Sarah about the proposal' -> add_task title 'proposal', priority 'medium', assignee 'Sarah'. 'grab milk' -> add_shopping_item item 'milk'.\",\"confidence\":0.0426,\"prefill_tps\":26.8,\"decode_tps\":23.4,\"peak_ram_mb\":-2097151.9,\"validation\":{\"ungrounded\":[],\"negation\":false}}",
+          "parsed": {
+            "type": "call",
+            "success": true,
+            "error": null,
+            "error_code": null,
+            "reason": null,
+            "function_calls": [],
+            "suppressed_calls": [
+              {
+                "name": "add_task",
+                "arguments": {
+                  "title": "Proposal",
+                  "priority": "medium",
+                  "assignee": "Sarah"
+                }
+              },
+              {
+                "name": "add_shopping_item",
+                "arguments": {
+                  "item": "milk"
+                }
+              }
+            ],
+            "reasoning": "'email Sarah about the proposal' -> add_task title 'proposal', priority 'medium', assignee 'Sarah'. 'grab milk' -> add_shopping_item item 'milk'.",
+            "confidence": 0.0426,
+            "prefill_tps": 26.8,
+            "decode_tps": 23.4,
+            "peak_ram_mb": -2097151.9,
+            "validation": {
+              "ungrounded": [],
+              "negation": false
+            }
+          },
+          "latency_ms": 5455.660900000003,
+          "schema": {
+            "valid": false,
+            "errors": [
+              "No actionable function calls"
+            ]
+          }
+        },
+        "total_latency_ms": 8168.782399999996
+      },
+      "audio_sha256": "2ff78a95c2378de10959326877502edffed21a20da155942ed6bf7f917d1b170"
+    }
+  ],
+  "controls": {
+    "silence": {
+      "source": "audio",
+      "transcript": "",
+      "stt": {
+        "raw": "{\"text\":\"\",\"language\":\"\",\"words\":[],\"ttft_ms\":0.0,\"decode_tps\":0.0}",
+        "parsed": {
+          "text": "",
+          "language": "",
+          "words": [],
+          "ttft_ms": 0,
+          "decode_tps": 0
+        },
+        "latency_ms": 0.7464000000036322,
+        "duration_ms": 1000
+      },
+      "routing": {
+        "skipped": true,
+        "reason": "empty transcript",
+        "raw": null,
+        "parsed": null,
+        "latency_ms": 0
+      },
+      "total_latency_ms": 1.2154999999911524
+    },
+    "unrelated": {
+      "raw": "{\"type\":\"call\",\"success\":true,\"error\":null,\"error_code\":null,\"reason\":null,\"function_calls\":[],\"suppressed_calls\":[],\"reasoning\":\"No tool for geography or facts. add_task, add_note, add_reminder, add_shopping_item, add_task, add_note, add_reminder all unrelated.\",\"confidence\":0.8260,\"prefill_tps\":26.2,\"decode_tps\":23.4,\"peak_ram_mb\":0.0}",
+      "parsed": {
+        "type": "call",
+        "success": true,
+        "error": null,
+        "error_code": null,
+        "reason": null,
+        "function_calls": [],
+        "suppressed_calls": [],
+        "reasoning": "No tool for geography or facts. add_task, add_note, add_reminder, add_shopping_item, add_task, add_note, add_reminder all unrelated.",
+        "confidence": 0.826,
+        "prefill_tps": 26.2,
+        "decode_tps": 23.4,
+        "peak_ram_mb": 0
+      },
+      "latency_ms": 2798.62490000001,
+      "schema": {
+        "valid": false,
+        "errors": [
+          "No actionable function calls"
+        ]
+      }
+    }
+  },
+  "final_wasm_memory_bytes": 177143808
+}

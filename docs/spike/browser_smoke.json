@@ -1,0 +1,364 @@
+{
+  "browser": "131.0.6778.204",
+  "origin": "http://localhost:59804/",
+  "fake_microphone": true,
+  "capture": {
+    "recording": true,
+    "sample_rate": 48000,
+    "limit_seconds": 30
+  },
+  "init": {
+    "prefix_tokens": 485,
+    "wasm_memory_bytes": 147587072,
+    "system": "locale: en-US",
+    "fetch_and_wasm_ms": 130.59999999403954,
+    "load_and_prefix_ms": 16223.10000000894,
+    "total_init_ms": 16353.70000000298
+  },
+  "fixture": {
+    "source": "audio",
+    "transcript": "Remind me to call the dentist tomorrow at 3 p.m.",
+    "stt": {
+      "raw": "{\"text\":\"Remind me to call the dentist tomorrow at 3 p.m.\",\"language\":\"en\",\"words\":[{\"word\":\"Remind\",\"start\":0.16,\"end\":0.56,\"probability\":0.934},{\"word\":\"me\",\"start\":0.56,\"end\":0.72,\"probability\":0.999},{\"word\":\"to\",\"start\":0.72,\"end\":0.88,\"probability\":0.999},{\"word\":\"call\",\"start\":0.88,\"end\":1.12,\"probability\":1.000},{\"word\":\"the\",\"start\":1.12,\"end\":1.28,\"probability\":0.993},{\"word\":\"dentist\",\"start\":1.28,\"end\":1.52,\"probability\":0.968},{\"word\":\"tomorrow\",\"start\":1.52,\"end\":2.08,\"probability\":0.590},{\"word\":\"at\",\"start\":2.08,\"end\":2.24,\"probability\":1.000},{\"word\":\"3\",\"start\":2.24,\"end\":2.56,\"probability\":0.969},{\"word\":\"p.m.\",\"start\":2.56,\"end\":3.04,\"probability\":0.952}],\"ttft_ms\":850.5,\"decode_tps\":15.1}",
+      "parsed": {
+        "text": "Remind me to call the dentist tomorrow at 3 p.m.",
+        "language": "en",
+        "words": [
+          {
+            "word": "Remind",
+            "start": 0.16,
+            "end": 0.56,
+            "probability": 0.934
+          },
+          {
+            "word": "me",
+            "start": 0.56,
+            "end": 0.72,
+            "probability": 0.999
+          },
+          {
+            "word": "to",
+            "start": 0.72,
+            "end": 0.88,
+            "probability": 0.999
+          },
+          {
+            "word": "call",
+            "start": 0.88,
+            "end": 1.12,
+            "probability": 1
+          },
+          {
+            "word": "the",
+            "start": 1.12,
+            "end": 1.28,
+            "probability": 0.993
+          },
+          {
+            "word": "dentist",
+            "start": 1.28,
+            "end": 1.52,
+            "probability": 0.968
+          },
+          {
+            "word": "tomorrow",
+            "start": 1.52,
+            "end": 2.08,
+            "probability": 0.59
+          },
+          {
+            "word": "at",
+            "start": 2.08,
+            "end": 2.24,
+            "probability": 1
+          },
+          {
+            "word": "3",
+            "start": 2.24,
+            "end": 2.56,
+            "probability": 0.969
+          },
+          {
+            "word": "p.m.",
+            "start": 2.56,
+            "end": 3.04,
+            "probability": 0.952
+          }
+        ],
+        "ttft_ms": 850.5,
+        "decode_tps": 15.1
+      },
+      "latency_ms": 2157.2000000029802,
+      "duration_ms": 3840
+    },
+    "routing": {
+      "raw": "{\"type\":\"call\",\"success\":true,\"error\":null,\"error_code\":null,\"reason\":null,\"function_calls\":[{\"name\":\"add_reminder\",\"arguments\":{\"title\":\"Call the dentist\",\"remind_at\":\"tomorrow at 3 p.m.\"}}],\"suppressed_calls\":[],\"reasoning\":\"title 'call the dentist' from query; remind_at 'tomorrow at 3 p.m.' from query; no recurring stated so omitted.\",\"confidence\":0.1566,\"prefill_tps\":21.3,\"decode_tps\":18.2,\"peak_ram_mb\":-2097151.9,\"validation\":{\"ungrounded\":[],\"negation\":false}}",
+      "parsed": {
+        "type": "call",
+        "success": true,
+        "error": null,
+        "error_code": null,
+        "reason": null,
+        "function_calls": [
+          {
+            "name": "add_reminder",
+            "arguments": {
+              "title": "Call the dentist",
+              "remind_at": "tomorrow at 3 p.m."
+            }
+          }
+        ],
+        "suppressed_calls": [],
+        "reasoning": "title 'call the dentist' from query; remind_at 'tomorrow at 3 p.m.' from query; no recurring stated so omitted.",
+        "confidence": 0.1566,
+        "prefill_tps": 21.3,
+        "decode_tps": 18.2,
+        "peak_ram_mb": -2097151.9,
+        "validation": {
+          "ungrounded": [],
+          "negation": false
+        }
+      },
+      "latency_ms": 4668.199999988079,
+      "schema": {
+        "valid": true,
+        "errors": []
+      }
+    },
+    "total_latency_ms": 6829
+  },
+  "silence": {
+    "source": "audio",
+    "transcript": "",
+    "stt": {
+      "raw": "{\"text\":\"\",\"language\":\"\",\"words\":[],\"ttft_ms\":0.0,\"decode_tps\":0.0}",
+      "parsed": {
+        "text": "",
+        "language": "",
+        "words": [],
+        "ttft_ms": 0,
+        "decode_tps": 0
+      },
+      "latency_ms": 2.5,
+      "duration_ms": 1000
+    },
+    "routing": {
+      "skipped": true,
+      "reason": "empty transcript",
+      "raw": null,
+      "parsed": null,
+      "latency_ms": 0
+    },
+    "total_latency_ms": 4.200000002980232
+  },
+  "microphone": {
+    "source": "audio",
+    "transcript": "Remind me to call the dentist tomorrow at 3 pm. Remind me to",
+    "stt": {
+      "raw": "{\"text\":\"Remind me to call the dentist tomorrow at 3 pm. Remind me to\",\"language\":\"en\",\"words\":[{\"word\":\"Remind\",\"start\":0.16,\"end\":0.48,\"probability\":0.921},{\"word\":\"me\",\"start\":0.48,\"end\":0.64,\"probability\":0.999},{\"word\":\"to\",\"start\":0.64,\"end\":0.80,\"probability\":1.000},{\"word\":\"call\",\"start\":0.80,\"end\":1.04,\"probability\":1.000},{\"word\":\"the\",\"start\":1.04,\"end\":1.20,\"probability\":0.996},{\"word\":\"dentist\",\"start\":1.20,\"end\":1.52,\"probability\":0.974},{\"word\":\"tomorrow\",\"start\":1.52,\"end\":2.08,\"probability\":0.975},{\"word\":\"at\",\"start\":2.08,\"end\":2.24,\"probability\":1.000},{\"word\":\"3\",\"start\":2.24,\"end\":2.48,\"probability\":0.992},{\"word\":\"pm.\",\"start\":2.48,\"end\":3.04,\"probability\":0.556},{\"word\":\"Remind\",\"start\":4.00,\"end\":4.32,\"probability\":0.975},{\"word\":\"me\",\"start\":4.32,\"end\":4.48,\"probability\":0.997},{\"word\":\"to\",\"start\":4.48,\"end\":4.48,\"probability\":0.989}],\"ttft_ms\":877.3,\"decode_tps\":14.2}",
+      "parsed": {
+        "text": "Remind me to call the dentist tomorrow at 3 pm. Remind me to",
+        "language": "en",
+        "words": [
+          {
+            "word": "Remind",
+            "start": 0.16,
+            "end": 0.48,
+            "probability": 0.921
+          },
+          {
+            "word": "me",
+            "start": 0.48,
+            "end": 0.64,
+            "probability": 0.999
+          },
+          {
+            "word": "to",
+            "start": 0.64,
+            "end": 0.8,
+            "probability": 1
+          },
+          {
+            "word": "call",
+            "start": 0.8,
+            "end": 1.04,
+            "probability": 1
+          },
+          {
+            "word": "the",
+            "start": 1.04,
+            "end": 1.2,
+            "probability": 0.996
+          },
+          {
+            "word": "dentist",
+            "start": 1.2,
+            "end": 1.52,
+            "probability": 0.974
+          },
+          {
+            "word": "tomorrow",
+            "start": 1.52,
+            "end": 2.08,
+            "probability": 0.975
+          },
+          {
+            "word": "at",
+            "start": 2.08,
+            "end": 2.24,
+            "probability": 1
+          },
+          {
+            "word": "3",
+            "start": 2.24,
+            "end": 2.48,
+            "probability": 0.992
+          },
+          {
+            "word": "pm.",
+            "start": 2.48,
+            "end": 3.04,
+            "probability": 0.556
+          },
+          {
+            "word": "Remind",
+            "start": 4,
+            "end": 4.32,
+            "probability": 0.975
+          },
+          {
+            "word": "me",
+            "start": 4.32,
+            "end": 4.48,
+            "probability": 0.997
+          },
+          {
+            "word": "to",
+            "start": 4.48,
+            "end": 4.48,
+            "probability": 0.989
+          }
+        ],
+        "ttft_ms": 877.3,
+        "decode_tps": 14.2
+      },
+      "latency_ms": 2519.8999999910593,
+      "duration_ms": 4522.6875
+    },
+    "routing": {
+      "raw": "{\"type\":\"call\",\"success\":true,\"error\":null,\"error_code\":null,\"reason\":null,\"function_calls\":[{\"name\":\"add_reminder\",\"arguments\":{\"title\":\"Call the dentist\",\"remind_at\":\"tomorrow at 3 pm\"}}],\"suppressed_calls\":[],\"reasoning\":\"Two reminders: title 'call the dentist' from query, remind_at 'tomorrow at 3 pm' from query, no recurring stated so omitted.\",\"confidence\":0.1952,\"prefill_tps\":21.9,\"decode_tps\":18.5,\"peak_ram_mb\":-2097151.9,\"validation\":{\"ungrounded\":[],\"negation\":false}}",
+      "parsed": {
+        "type": "call",
+        "success": true,
+        "error": null,
+        "error_code": null,
+        "reason": null,
+        "function_calls": [
+          {
+            "name": "add_reminder",
+            "arguments": {
+              "title": "Call the dentist",
+              "remind_at": "tomorrow at 3 pm"
+            }
+          }
+        ],
+        "suppressed_calls": [],
+        "reasoning": "Two reminders: title 'call the dentist' from query, remind_at 'tomorrow at 3 pm' from query, no recurring stated so omitted.",
+        "confidence": 0.1952,
+        "prefill_tps": 21.9,
+        "decode_tps": 18.5,
+        "peak_ram_mb": -2097151.9,
+        "validation": {
+          "ungrounded": [],
+          "negation": false
+        }
+      },
+      "latency_ms": 4829.5999999940395,
+      "schema": {
+        "valid": true,
+        "errors": []
+      }
+    },
+    "total_latency_ms": 7353.20000000298,
+    "capture": {
+      "original_rate": 48000,
+      "truncated_at_30s": false
+    }
+  },
+  "offline": {
+    "source": "text",
+    "transcript": "Buy eggs, milk, and bread from Whole Foods",
+    "stt": null,
+    "routing": {
+      "raw": "{\"type\":\"call\",\"success\":true,\"error\":null,\"error_code\":null,\"reason\":null,\"function_calls\":[],\"suppressed_calls\":[{\"name\":\"add_shopping_item\",\"arguments\":{\"item\":\"eggs\",\"quantity\":\"bread\"}},{\"name\":\"add_shopping_item\",\"arguments\":{\"item\":\"milk\",\"quantity\":\"bread\"}},{\"name\":\"add_shopping_item\",\"arguments\":{\"item\":\"bread\",\"quantity\":\"bread\"}}],\"reasoning\":\"Three items: eggs, milk, bread. Add_shopping_item called twice.\",\"confidence\":0.0172,\"prefill_tps\":21.1,\"decode_tps\":18.3,\"peak_ram_mb\":-2097151.9,\"validation\":{\"ungrounded\":[],\"negation\":false}}",
+      "parsed": {
+        "type": "call",
+        "success": true,
+        "error": null,
+        "error_code": null,
+        "reason": null,
+        "function_calls": [],
+        "suppressed_calls": [
+          {
+            "name": "add_shopping_item",
+            "arguments": {
+              "item": "eggs",
+              "quantity": "bread"
+            }
+          },
+          {
+            "name": "add_shopping_item",
+            "arguments": {
+              "item": "milk",
+              "quantity": "bread"
+            }
+          },
+          {
+            "name": "add_shopping_item",
+            "arguments": {
+              "item": "bread",
+              "quantity": "bread"
+            }
+          }
+        ],
+        "reasoning": "Three items: eggs, milk, bread. Add_shopping_item called twice.",
+        "confidence": 0.0172,
+        "prefill_tps": 21.1,
+        "decode_tps": 18.3,
+        "peak_ram_mb": -2097151.9,
+        "validation": {
+          "ungrounded": [],
+          "negation": false
+        }
+      },
+      "latency_ms": 6304.20000000298,
+      "schema": {
+        "valid": false,
+        "errors": [
+          "No actionable function calls"
+        ]
+      }
+    }
+  },
+  "errors": [],
+  "network_requests": [
+    "http://localhost:59804/",
+    "http://localhost:59804/bridge.js",
+    "http://localhost:59804/flutter_bootstrap.js",
+    "http://localhost:59804/canvaskit/chromium/canvaskit.wasm",
+    "http://localhost:59804/canvaskit/chromium/canvaskit.js",
+    "http://localhost:59804/main.dart.js",
+    "http://localhost:59804/assets/FontManifest.json",
+    "http://localhost:59804/assets/fonts/MaterialIcons-Regular.otf",
+    "http://localhost:59804/assets/fonts/fallback/Roboto-Regular.ttf",
+    "http://localhost:59804/assets/assets/utterances.json",
+    "http://localhost:59804/vendor/needle.js",
+    "http://localhost:59804/engine.js",
+    "http://localhost:59804/vendor/needle.wasm",
+    "http://localhost:59804/models/needle3.cact",
+    "http://localhost:59804/models/whistle.cact",
+    "http://localhost:59804/assets/assets/tools.json",
+    "http://localhost:59804/assets/assets/audio/01.wav",
+    "http://localhost:59804/assets/assets/audio/01.wav"
+  ]
+}

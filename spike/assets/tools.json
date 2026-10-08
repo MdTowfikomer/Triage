@@ -1,0 +1,67 @@
+[
+  {
+    "name": "add_task",
+    "description": "Add a task to do, including sending an email.",
+    "parameters": {
+      "type": "object", "additionalProperties": false,
+      "properties": {
+        "title": {"type": "string", "description": "Task action as spoken"},
+        "priority": {"type": "string", "enum": ["low", "medium", "high"], "default": "medium"},
+        "due_date": {"type": "string", "description": "Relative due date phrase verbatim, e.g. Friday"},
+        "assignee": {"type": "string", "description": "Person responsible, not email recipient"}
+      },
+      "required": ["title"]
+    }
+  },
+  {
+    "name": "add_note",
+    "description": "Save an observation, meeting outcome or decision as a note.",
+    "parameters": {
+      "type": "object", "additionalProperties": false,
+      "properties": {
+        "title": {"type": "string", "description": "Title from the observation"},
+        "body": {"type": "string", "description": "Observation verbatim"},
+        "topic": {"type": "string", "description": "Topic if stated"}
+      },
+      "required": ["title", "body"]
+    }
+  },
+  {
+    "name": "add_reminder",
+    "description": "Set a reminder to do something at a time.",
+    "parameters": {
+      "type": "object", "additionalProperties": false,
+      "properties": {
+        "title": {"type": "string", "description": "Action to remember"},
+        "remind_at": {"type": "string", "description": "Relative time phrase verbatim, e.g. tomorrow at 3pm"},
+        "recurring": {"type": "string", "enum": ["none", "daily", "weekly"], "default": "none"}
+      },
+      "required": ["title", "remind_at"]
+    }
+  },
+  {
+    "name": "add_shopping_item",
+    "description": "Add one item to buy or grab to the shopping list. One call per item.",
+    "parameters": {
+      "type": "object", "additionalProperties": false,
+      "properties": {
+        "item": {"type": "string", "description": "One shopping item"},
+        "quantity": {"type": "string", "description": "Quantity with units if stated"},
+        "store": {"type": "string", "description": "Store if stated"}
+      },
+      "required": ["item"]
+    }
+  },
+  {
+    "name": "log_idea",
+    "description": "Save a speculative suggestion or what-if idea.",
+    "parameters": {
+      "type": "object", "additionalProperties": false,
+      "properties": {
+        "title": {"type": "string", "description": "Idea title from the input"},
+        "description": {"type": "string", "description": "Idea verbatim"}
+      },
+      "required": ["title", "description"]
+    }
+  }
+]
