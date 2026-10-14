@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="triage_splash_background">#F8F7F2</color>
+    <color name="triage_mark_dark">#303B35</color>
+    <color name="triage_mark_warm">#C7A88F</color>
+</resources>

@@ -99,6 +99,7 @@ void main() {
     tester,
   ) async {
     await mount(tester);
+    await tester.ensureVisible(find.text('New here? Create an account'));
     await tester.tap(find.text('New here? Create an account'));
     await tester.pump();
     await fill(tester);
@@ -107,6 +108,7 @@ void main() {
     expect(find.text('Check your email.'), findsOneWidget);
     expect(requests.single.$1, 'startRegistration');
     await tester.enterText(find.byKey(const Key('auth-code')), '123456');
+    await tester.ensureVisible(find.text('Verify and sign in'));
     await tester.tap(find.text('Verify and sign in'));
     await tester.pumpAndSettle();
     expect(requests.map((r) => r.$1), [

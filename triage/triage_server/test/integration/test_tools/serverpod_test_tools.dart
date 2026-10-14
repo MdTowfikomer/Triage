@@ -17,12 +17,28 @@ import 'package:serverpod/serverpod.dart' as _is;
 import 'package:serverpod_auth_core_server/serverpod_auth_core_server.dart'
     as _iacs;
 import 'package:serverpod_test/serverpod_test.dart' as _ist;
+import 'package:triage_server/src/generated/device_registration_response.dart'
+    as _iheh3jjw;
+import 'package:triage_server/src/generated/device_telemetry.dart' as _i375h7rk;
 import 'package:triage_server/src/generated/future_calls.dart' as _i2j7jym1;
 import 'package:triage_server/src/generated/future_calls_generated_models/reminder_future_call_fire_model.dart'
     as _i266jsul;
+import 'package:triage_server/src/generated/future_calls_generated_models/routine_dispatcher_future_call_fire_model.dart'
+    as _iqsi245o;
 import 'package:triage_server/src/generated/inbox_event.dart' as _itthhe7m;
 import 'package:triage_server/src/generated/inbox_item.dart' as _iaro1wa7;
+import 'package:triage_server/src/generated/routine_acknowledgement_event.dart'
+    as _izmj5tvz;
+import 'package:triage_server/src/generated/routine_dispatch_event.dart'
+    as _im0egq4a;
+import 'package:triage_server/src/generated/routine_schedule.dart' as _iu5wwj5x;
+import 'package:triage_server/src/generated/routine_schedule_response.dart'
+    as _iy5kpvyt;
 import 'package:triage_server/src/generated/voice_action.dart' as _i31v6uq3;
+import 'package:triage_server/src/generated/voice_command_sync_batch.dart'
+    as _i7hgt9s1;
+import 'package:triage_server/src/generated/voice_command_sync_result.dart'
+    as _it48k5hv;
 import 'package:triage_server/src/generated/protocol.dart';
 import 'package:triage_server/src/generated/endpoints.dart';
 export 'package:serverpod_test/serverpod_test_public_exports.dart';
@@ -162,9 +178,19 @@ class TestEndpoints {
 
   late final _JwtRefreshEndpoint jwtRefresh;
 
+  late final _CommandSyncEndpoint commandSync;
+
+  late final _DevAuthEndpoint devAuth;
+
+  late final _DeviceEndpoint device;
+
   late final _InboxEndpoint inbox;
 
+  late final _RoutineEndpoint routine;
+
   late final _SyncEndpoint sync;
+
+  late final _TelemetryEndpoint telemetry;
 
   late final _VoiceEndpoint voice;
 }
@@ -184,11 +210,31 @@ class _InternalTestEndpoints extends TestEndpoints
       endpoints,
       serializationManager,
     );
+    commandSync = _CommandSyncEndpoint(
+      endpoints,
+      serializationManager,
+    );
+    devAuth = _DevAuthEndpoint(
+      endpoints,
+      serializationManager,
+    );
+    device = _DeviceEndpoint(
+      endpoints,
+      serializationManager,
+    );
     inbox = _InboxEndpoint(
       endpoints,
       serializationManager,
     );
+    routine = _RoutineEndpoint(
+      endpoints,
+      serializationManager,
+    );
     sync = _SyncEndpoint(
+      endpoints,
+      serializationManager,
+    );
+    telemetry = _TelemetryEndpoint(
       endpoints,
       serializationManager,
     );
@@ -201,6 +247,8 @@ class _InternalTestEndpoints extends TestEndpoints
 
 class _FutureCalls {
   late final reminder = _ReminderFutureCall();
+
+  late final routineDispatcher = _RoutineDispatcherFutureCall();
 }
 
 class _EmailIdpEndpoint {
@@ -521,6 +569,136 @@ class _JwtRefreshEndpoint {
   }
 }
 
+class _CommandSyncEndpoint {
+  _CommandSyncEndpoint(
+    this._endpointDispatch,
+    this._serializationManager,
+  );
+
+  final _is.EndpointDispatch _endpointDispatch;
+
+  final _is.SerializationManager _serializationManager;
+
+  _ida.Future<_it48k5hv.VoiceCommandSyncResult> syncBatch(
+    _ist.TestSessionBuilder sessionBuilder,
+    _i7hgt9s1.VoiceCommandSyncBatch batch,
+  ) async {
+    return _ist.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _ist.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'commandSync',
+            method: 'syncBatch',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'commandSync',
+          methodName: 'syncBatch',
+          parameters: _ist.testObjectToJson({'batch': batch}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _ida.Future<_it48k5hv.VoiceCommandSyncResult>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+}
+
+class _DevAuthEndpoint {
+  _DevAuthEndpoint(
+    this._endpointDispatch,
+    this._serializationManager,
+  );
+
+  final _is.EndpointDispatch _endpointDispatch;
+
+  final _is.SerializationManager _serializationManager;
+
+  _ida.Future<_iacs.AuthSuccess> authenticatePilotUser(
+    _ist.TestSessionBuilder sessionBuilder, {
+    required String email,
+  }) async {
+    return _ist.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _ist.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'devAuth',
+            method: 'authenticatePilotUser',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'devAuth',
+          methodName: 'authenticatePilotUser',
+          parameters: _ist.testObjectToJson({'email': email}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _ida.Future<_iacs.AuthSuccess>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+}
+
+class _DeviceEndpoint {
+  _DeviceEndpoint(
+    this._endpointDispatch,
+    this._serializationManager,
+  );
+
+  final _is.EndpointDispatch _endpointDispatch;
+
+  final _is.SerializationManager _serializationManager;
+
+  _ida.Future<_iheh3jjw.DeviceRegistrationResponse> registerDevice(
+    _ist.TestSessionBuilder sessionBuilder,
+    String deviceId, {
+    String? deviceName,
+  }) async {
+    return _ist.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _ist.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'device',
+            method: 'registerDevice',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'device',
+          methodName: 'registerDevice',
+          parameters: _ist.testObjectToJson({
+            'deviceId': deviceId,
+            'deviceName': deviceName,
+          }),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _ida.Future<_iheh3jjw.DeviceRegistrationResponse>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+}
+
 class _InboxEndpoint {
   _InboxEndpoint(
     this._endpointDispatch,
@@ -711,6 +889,155 @@ class _InboxEndpoint {
   }
 }
 
+class _RoutineEndpoint {
+  _RoutineEndpoint(
+    this._endpointDispatch,
+    this._serializationManager,
+  );
+
+  final _is.EndpointDispatch _endpointDispatch;
+
+  final _is.SerializationManager _serializationManager;
+
+  _ida.Future<_iy5kpvyt.RoutineScheduleResponse> scheduleRoutine(
+    _ist.TestSessionBuilder sessionBuilder, {
+    required String deviceId,
+    required String name,
+    required DateTime scheduledTime,
+    required String stepsJson,
+  }) async {
+    return _ist.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _ist.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'routine',
+            method: 'scheduleRoutine',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'routine',
+          methodName: 'scheduleRoutine',
+          parameters: _ist.testObjectToJson({
+            'deviceId': deviceId,
+            'name': name,
+            'scheduledTime': scheduledTime,
+            'stepsJson': stepsJson,
+          }),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _ida.Future<_iy5kpvyt.RoutineScheduleResponse>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _ida.Stream<_im0egq4a.RoutineDispatchEvent> streamRoutineDispatches(
+    _ist.TestSessionBuilder sessionBuilder, {
+    required String deviceId,
+    required String deviceToken,
+  }) {
+    var _localTestStreamManager =
+        _ist.TestStreamManager<_im0egq4a.RoutineDispatchEvent>();
+    _ist.callStreamFunctionAndHandleExceptions(
+      () async {
+        var _localUniqueSession =
+            (sessionBuilder as _ist.InternalTestSessionBuilder).internalBuild(
+              endpoint: 'routine',
+              method: 'streamRoutineDispatches',
+            );
+        var _localCallContext = await _endpointDispatch
+            .getMethodStreamCallContext(
+              createSessionCallback: (_) => _localUniqueSession,
+              endpointPath: 'routine',
+              methodName: 'streamRoutineDispatches',
+              arguments: {
+                'deviceId': deviceId,
+                'deviceToken': deviceToken,
+              },
+              requestedInputStreams: [],
+              serializationManager: _serializationManager,
+            );
+        await _localTestStreamManager.callStreamMethod(
+          _localCallContext,
+          _localUniqueSession,
+          {},
+        );
+      },
+      _localTestStreamManager.outputStreamController,
+    );
+    return _localTestStreamManager.outputStreamController.stream;
+  }
+
+  _ida.Future<bool> acknowledgeRoutine(
+    _ist.TestSessionBuilder sessionBuilder,
+    _izmj5tvz.RoutineAcknowledgementEvent ack,
+  ) async {
+    return _ist.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _ist.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'routine',
+            method: 'acknowledgeRoutine',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'routine',
+          methodName: 'acknowledgeRoutine',
+          parameters: _ist.testObjectToJson({'ack': ack}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _ida.Future<bool>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _ida.Future<_iu5wwj5x.RoutineSchedule?> getRoutine(
+    _ist.TestSessionBuilder sessionBuilder,
+    String routineId,
+  ) async {
+    return _ist.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _ist.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'routine',
+            method: 'getRoutine',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'routine',
+          methodName: 'getRoutine',
+          parameters: _ist.testObjectToJson({'routineId': routineId}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _ida.Future<_iu5wwj5x.RoutineSchedule?>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+}
+
 class _SyncEndpoint {
   _SyncEndpoint(
     this._endpointDispatch,
@@ -739,6 +1066,116 @@ class _SyncEndpoint {
               endpointPath: 'sync',
               methodName: 'streamInbox',
               arguments: {},
+              requestedInputStreams: [],
+              serializationManager: _serializationManager,
+            );
+        await _localTestStreamManager.callStreamMethod(
+          _localCallContext,
+          _localUniqueSession,
+          {},
+        );
+      },
+      _localTestStreamManager.outputStreamController,
+    );
+    return _localTestStreamManager.outputStreamController.stream;
+  }
+}
+
+class _TelemetryEndpoint {
+  _TelemetryEndpoint(
+    this._endpointDispatch,
+    this._serializationManager,
+  );
+
+  final _is.EndpointDispatch _endpointDispatch;
+
+  final _is.SerializationManager _serializationManager;
+
+  _ida.Future<_i375h7rk.DeviceTelemetry> update(
+    _ist.TestSessionBuilder sessionBuilder,
+    _i375h7rk.DeviceTelemetry telemetry,
+    String deviceToken,
+  ) async {
+    return _ist.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _ist.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'telemetry',
+            method: 'update',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'telemetry',
+          methodName: 'update',
+          parameters: _ist.testObjectToJson({
+            'telemetry': telemetry,
+            'deviceToken': deviceToken,
+          }),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _ida.Future<_i375h7rk.DeviceTelemetry>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _ida.Future<_i375h7rk.DeviceTelemetry?> getLatest(
+    _ist.TestSessionBuilder sessionBuilder,
+    String deviceId,
+  ) async {
+    return _ist.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _ist.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'telemetry',
+            method: 'getLatest',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'telemetry',
+          methodName: 'getLatest',
+          parameters: _ist.testObjectToJson({'deviceId': deviceId}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _ida.Future<_i375h7rk.DeviceTelemetry?>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _ida.Stream<_i375h7rk.DeviceTelemetry> streamTelemetry(
+    _ist.TestSessionBuilder sessionBuilder,
+    String deviceId,
+  ) {
+    var _localTestStreamManager =
+        _ist.TestStreamManager<_i375h7rk.DeviceTelemetry>();
+    _ist.callStreamFunctionAndHandleExceptions(
+      () async {
+        var _localUniqueSession =
+            (sessionBuilder as _ist.InternalTestSessionBuilder).internalBuild(
+              endpoint: 'telemetry',
+              method: 'streamTelemetry',
+            );
+        var _localCallContext = await _endpointDispatch
+            .getMethodStreamCallContext(
+              createSessionCallback: (_) => _localUniqueSession,
+              endpointPath: 'telemetry',
+              methodName: 'streamTelemetry',
+              arguments: {'deviceId': deviceId},
               requestedInputStreams: [],
               serializationManager: _serializationManager,
             );
@@ -808,6 +1245,27 @@ class _ReminderFutureCall {
         (sessionBuilder as _ist.InternalTestSessionBuilder).internalBuild();
     try {
       await _i2j7jym1.ReminderFireFutureCall().invoke(
+        _localUniqueSession,
+        object,
+      );
+    } finally {
+      await _localUniqueSession.close();
+    }
+  }
+}
+
+class _RoutineDispatcherFutureCall {
+  Future<void> fire(
+    _ist.TestSessionBuilder sessionBuilder,
+    String routineId,
+  ) async {
+    var object = _iqsi245o.RoutineDispatcherFutureCallFireModel(
+      routineId: routineId,
+    );
+    var _localUniqueSession =
+        (sessionBuilder as _ist.InternalTestSessionBuilder).internalBuild();
+    try {
+      await _i2j7jym1.RoutineDispatcherFireFutureCall().invoke(
         _localUniqueSession,
         object,
       );

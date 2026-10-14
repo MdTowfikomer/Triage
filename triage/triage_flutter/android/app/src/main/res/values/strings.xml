@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="triage_trigger_name">Triage volume key trigger</string>
+    <string name="triage_trigger_description">Detects holding Volume Up so a deliberate phone shake can open Triage while unlocked. Triage does not read screen content or control taps through this service. Normal volume keys continue to work.</string>
+</resources>

@@ -1,0 +1,5 @@
+class: VoiceCommandSyncBatch
+fields:
+  deviceId: String
+  deviceToken: String
+  entries: List<VoiceCommandSyncEntry>

@@ -2,6 +2,9 @@
 .agents
 .backboard
 .spike-cache/
+/.scratch/
+/.UI_inspirations/
+/get started.pdf
 
 # Sensitive credentials, secrets & keys
 **/config/passwords.yaml
@@ -9,6 +12,9 @@
 **/*.env.*
 **/*.keystore
 **/*.jks
+**/*.pem
+**/*.p12
+**/*.pfx
 **/google-services.json
 **/key.properties
 **/local.properties

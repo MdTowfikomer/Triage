@@ -1,0 +1,10 @@
+class: RoutineAcknowledgementEvent
+fields:
+  routineOccurrenceId: String
+  routineId: String
+  deviceId: String
+  deviceToken: String
+  status: String
+  stepOutcomes: List<RoutineStepOutcome>
+  completedAt: DateTime
+  clientNote: String?

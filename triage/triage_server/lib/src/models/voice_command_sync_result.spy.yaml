@@ -1,0 +1,6 @@
+class: VoiceCommandSyncResult
+fields:
+  syncedCount: int
+  duplicateCount: int
+  failedCount: int
+  syncedEventIds: List<String>

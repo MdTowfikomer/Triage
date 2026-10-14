@@ -1,0 +1,17 @@
+class: DeviceRegistration
+table: device_registrations
+fields:
+  deviceId: String
+  userId: UuidValue, relation(parent=serverpod_auth_core_user, onDelete=Cascade)
+  deviceToken: String
+  deviceName: String?
+  registeredAt: DateTime
+  lastSeenAt: DateTime?
+indexes:
+  device_registration_device_id_unique_idx:
+    fields: deviceId
+    unique: true
+  device_registration_token_idx:
+    fields: deviceToken
+  device_registration_user_idx:
+    fields: userId

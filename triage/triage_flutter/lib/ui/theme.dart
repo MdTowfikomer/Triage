@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
 abstract final class TriageColors {
-  static const obsidian = Color(0xFF0B0F17),
-      slate = Color(0xFF121824),
-      line = Color(0xFF1E2638);
-  static const white = Color(0xFFF1F5F9),
-      muted = Color(0xFF94A3B8),
-      dim = Color(0xFF64748B);
+  static const obsidian = Color(0xFFF8F7F2),
+      slate = Color(0xFFFFFFFF),
+      line = Color(0xFFE9E8E2);
+  static const white = Color(0xFF242521),
+      muted = Color(0xFF777971),
+      dim = Color(0xFF999B94);
   static const blue = Color(0xFF3B82F6),
       green = Color(0xFF10B981),
       amber = Color(0xFFF59E0B),
@@ -54,19 +54,33 @@ abstract final class UiTokens {
 
 ThemeData triageTheme() => ThemeData(
   useMaterial3: false,
-  brightness: Brightness.dark,
+  brightness: Brightness.light,
   fontFamily: 'Inter',
   fontFamilyFallback: const ['TriageEmoji'],
   scaffoldBackgroundColor: TriageColors.canvas,
   canvasColor: TriageColors.surface,
-  colorScheme: const ColorScheme.dark(
+  colorScheme: const ColorScheme.light(
     primary: TriageColors.white,
-    secondary: TriageColors.blue,
+    secondary: TriageColors.muted,
     surface: TriageColors.surface,
     error: TriageColors.red,
   ),
   splashFactory: NoSplash.splashFactory,
   dividerColor: TriageColors.border,
+  navigationBarTheme: const NavigationBarThemeData(
+    backgroundColor: TriageColors.surface,
+    indicatorColor: Color(0xFFE9E8E2),
+    labelTextStyle: WidgetStatePropertyAll(
+      TextStyle(color: TriageColors.white, fontSize: 11),
+    ),
+  ),
+  filledButtonTheme: FilledButtonThemeData(
+    style: FilledButton.styleFrom(
+      backgroundColor: TriageColors.white,
+      foregroundColor: TriageColors.surface,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+    ),
+  ),
   textTheme: const TextTheme(
     bodyMedium: TextStyle(color: TriageColors.white, fontSize: 14, height: 1.5),
     bodySmall: TextStyle(color: TriageColors.muted, fontSize: 12, height: 1.5),

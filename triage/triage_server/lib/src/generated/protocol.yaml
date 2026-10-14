@@ -9,13 +9,28 @@ emailIdp:
   - hasAccount:
 jwtRefresh:
   - refreshAccessToken:
+commandSync:
+  - syncBatch:
+devAuth:
+  - authenticatePilotUser:
+device:
+  - registerDevice:
 inbox:
   - createItem:
   - listItems:
   - completeItem:
   - updateItem:
   - deleteItem:
+routine:
+  - scheduleRoutine:
+  - streamRoutineDispatches:
+  - acknowledgeRoutine:
+  - getRoutine:
 sync:
   - streamInbox:
+telemetry:
+  - update:
+  - getLatest:
+  - streamTelemetry:
 voice:
   - routeVoice:

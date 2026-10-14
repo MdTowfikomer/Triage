@@ -1,0 +1,14 @@
+class: DeviceTelemetry
+table: device_telemetry
+fields:
+  deviceId: String
+  batteryLevel: int
+  isCharging: bool
+  volumeLevel: double
+  brightnessLevel: double
+  dndEnabled: bool
+  updatedAt: DateTime
+indexes:
+  device_telemetry_device_id_unique_idx:
+    fields: deviceId
+    unique: true

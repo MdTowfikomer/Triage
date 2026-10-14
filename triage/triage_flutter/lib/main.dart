@@ -12,17 +12,23 @@ import 'notifications/reminder_scheduler.dart';
 import 'state/inbox_controller.dart';
 import 'ui/auth_view.dart';
 import 'ui/inbox_view.dart';
+import 'ui/triage_app_shell.dart';
+import 'ui/offline_voice_spike_screen.dart';
 import 'ui/theme.dart';
 import 'voice/voice_factory.dart';
 
 const demoMode = bool.fromEnvironment('TRIAGE_DEMO');
+const voiceSpikeMode = bool.fromEnvironment(
+  'TRIAGE_VOICE_SPIKE',
+  defaultValue: true,
+);
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final client =
       Client(
           const String.fromEnvironment(
             'SERVER_URL',
-            defaultValue: 'http://localhost:8080/',
+            defaultValue: 'https://triage.api.serverpod.space/',
           ),
         )
         ..connectivityMonitor = FlutterConnectivityMonitor()
@@ -32,6 +38,17 @@ Future<void> main() async {
   }
   final prefs = await SharedPreferences.getInstance();
   if (!demoMode) await client.auth.initialize();
+  if (voiceSpikeMode) {
+    runApp(
+      MaterialApp(
+        title: 'Triage — Offline Voice Assistant',
+        debugShowCheckedModeBanner: false,
+        theme: triageTheme(),
+        home: TriageAppShell(serverpodClient: client),
+      ),
+    );
+    return;
+  }
   runApp(TriageApp(client: client, preferences: prefs, demo: demoMode));
 }
 
@@ -52,19 +69,26 @@ class TriageApp extends StatelessWidget {
       title: 'Triage',
       debugShowCheckedModeBanner: false,
       theme: triageTheme(),
-      home: demo
-          ? _InboxMount(client: client, preferences: preferences, demo: true)
-          : ValueListenableBuilder<AuthSuccess?>(
-              valueListenable: client.auth.authInfoListenable,
-              builder: (context, auth, child) => auth == null
-                  ? AuthView(client: client)
-                  : _InboxMount(
-                      key: ValueKey(auth.authUserId),
-                      client: client,
-                      preferences: preferences,
-                      owner: auth.authUserId,
-                    ),
-            ),
+      home: voiceSpikeMode
+          ? const OfflineVoiceSpikeScreen()
+          : (demo
+                ? _InboxMount(
+                    client: client,
+                    preferences: preferences,
+                    demo: true,
+                  )
+                : ValueListenableBuilder<AuthSuccess?>(
+                    valueListenable: client.auth.authInfoListenable,
+                    builder: (context, auth, child) => auth == null
+                        ? AuthView(client: client)
+                        : _InboxMount(
+                            key: ValueKey(auth.authUserId),
+                            client: client,
+                            preferences: preferences,
+                            owner: auth.authUserId,
+                          ),
+                  )),
+      routes: {'/voice_spike': (context) => const OfflineVoiceSpikeScreen()},
     );
   }
 }

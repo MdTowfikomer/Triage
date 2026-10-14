@@ -15,12 +15,22 @@ import 'package:serverpod_auth_core_server/serverpod_auth_core_server.dart'
     as _iacs;
 import 'package:serverpod_auth_idp_server/serverpod_auth_idp_server.dart'
     as _iais;
+import 'package:triage_server/src/generated/device_telemetry.dart' as _i375h7rk;
 import 'package:triage_server/src/generated/future_calls.dart' as _i2j7jym1;
 import 'package:triage_server/src/generated/inbox_item.dart' as _iaro1wa7;
+import 'package:triage_server/src/generated/routine_acknowledgement_event.dart'
+    as _izmj5tvz;
+import 'package:triage_server/src/generated/voice_command_sync_batch.dart'
+    as _i7hgt9s1;
 import '../auth/email_idp_endpoint.dart' as _iuc1hd5t;
 import '../auth/jwt_refresh_endpoint.dart' as _inwq3ztq;
+import '../endpoints/command_sync_endpoint.dart' as _ii7zkoeo;
+import '../endpoints/dev_auth_endpoint.dart' as _icypl9i6;
+import '../endpoints/device_endpoint.dart' as _ipl99gaq;
 import '../endpoints/inbox_endpoint.dart' as _ib2xr017;
+import '../endpoints/routine_endpoint.dart' as _ihcuaodq;
 import '../endpoints/sync_endpoint.dart' as _i609im4b;
+import '../endpoints/telemetry_endpoint.dart' as _i34lh6ht;
 import '../endpoints/voice_endpoint.dart' as _iq0gswfc;
 export 'future_calls.dart' show ServerpodFutureCallsGetter;
 
@@ -40,16 +50,46 @@ class Endpoints extends _is.EndpointDispatch {
           'jwtRefresh',
           null,
         ),
+      'commandSync': _ii7zkoeo.CommandSyncEndpoint()
+        ..initialize(
+          server,
+          'commandSync',
+          null,
+        ),
+      'devAuth': _icypl9i6.DevAuthEndpoint()
+        ..initialize(
+          server,
+          'devAuth',
+          null,
+        ),
+      'device': _ipl99gaq.DeviceEndpoint()
+        ..initialize(
+          server,
+          'device',
+          null,
+        ),
       'inbox': _ib2xr017.InboxEndpoint()
         ..initialize(
           server,
           'inbox',
           null,
         ),
+      'routine': _ihcuaodq.RoutineEndpoint()
+        ..initialize(
+          server,
+          'routine',
+          null,
+        ),
       'sync': _i609im4b.SyncEndpoint()
         ..initialize(
           server,
           'sync',
+          null,
+        ),
+      'telemetry': _i34lh6ht.TelemetryEndpoint()
+        ..initialize(
+          server,
+          'telemetry',
           null,
         ),
       'voice': _iq0gswfc.VoiceEndpoint()
@@ -265,6 +305,88 @@ class Endpoints extends _is.EndpointDispatch {
         ),
       },
     );
+    connectors['commandSync'] = _is.EndpointConnector(
+      name: 'commandSync',
+      endpoint: endpoints['commandSync']!,
+      methodConnectors: {
+        'syncBatch': _is.MethodConnector(
+          name: 'syncBatch',
+          params: {
+            'batch': _is.ParameterDescription(
+              name: 'batch',
+              type: _is.getType<_i7hgt9s1.VoiceCommandSyncBatch>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _is.Session session,
+                Map<String, dynamic> params,
+              ) async =>
+                  (endpoints['commandSync'] as _ii7zkoeo.CommandSyncEndpoint)
+                      .syncBatch(
+                        session,
+                        params['batch'],
+                      ),
+        ),
+      },
+    );
+    connectors['devAuth'] = _is.EndpointConnector(
+      name: 'devAuth',
+      endpoint: endpoints['devAuth']!,
+      methodConnectors: {
+        'authenticatePilotUser': _is.MethodConnector(
+          name: 'authenticatePilotUser',
+          params: {
+            'email': _is.ParameterDescription(
+              name: 'email',
+              type: _is.getType<String>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _is.Session session,
+                Map<String, dynamic> params,
+              ) async => (endpoints['devAuth'] as _icypl9i6.DevAuthEndpoint)
+                  .authenticatePilotUser(
+                    session,
+                    email: params['email'],
+                  ),
+        ),
+      },
+    );
+    connectors['device'] = _is.EndpointConnector(
+      name: 'device',
+      endpoint: endpoints['device']!,
+      methodConnectors: {
+        'registerDevice': _is.MethodConnector(
+          name: 'registerDevice',
+          params: {
+            'deviceId': _is.ParameterDescription(
+              name: 'deviceId',
+              type: _is.getType<String>(),
+              nullable: false,
+            ),
+            'deviceName': _is.ParameterDescription(
+              name: 'deviceName',
+              type: _is.getType<String?>(),
+              nullable: true,
+            ),
+          },
+          call:
+              (
+                _is.Session session,
+                Map<String, dynamic> params,
+              ) async => (endpoints['device'] as _ipl99gaq.DeviceEndpoint)
+                  .registerDevice(
+                    session,
+                    params['deviceId'],
+                    deviceName: params['deviceName'],
+                  ),
+        ),
+      },
+    );
     connectors['inbox'] = _is.EndpointConnector(
       name: 'inbox',
       endpoint: endpoints['inbox']!,
@@ -420,6 +542,115 @@ class Endpoints extends _is.EndpointDispatch {
         ),
       },
     );
+    connectors['routine'] = _is.EndpointConnector(
+      name: 'routine',
+      endpoint: endpoints['routine']!,
+      methodConnectors: {
+        'scheduleRoutine': _is.MethodConnector(
+          name: 'scheduleRoutine',
+          params: {
+            'deviceId': _is.ParameterDescription(
+              name: 'deviceId',
+              type: _is.getType<String>(),
+              nullable: false,
+            ),
+            'name': _is.ParameterDescription(
+              name: 'name',
+              type: _is.getType<String>(),
+              nullable: false,
+            ),
+            'scheduledTime': _is.ParameterDescription(
+              name: 'scheduledTime',
+              type: _is.getType<DateTime>(),
+              nullable: false,
+            ),
+            'stepsJson': _is.ParameterDescription(
+              name: 'stepsJson',
+              type: _is.getType<String>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _is.Session session,
+                Map<String, dynamic> params,
+              ) async => (endpoints['routine'] as _ihcuaodq.RoutineEndpoint)
+                  .scheduleRoutine(
+                    session,
+                    deviceId: params['deviceId'],
+                    name: params['name'],
+                    scheduledTime: params['scheduledTime'],
+                    stepsJson: params['stepsJson'],
+                  ),
+        ),
+        'acknowledgeRoutine': _is.MethodConnector(
+          name: 'acknowledgeRoutine',
+          params: {
+            'ack': _is.ParameterDescription(
+              name: 'ack',
+              type: _is.getType<_izmj5tvz.RoutineAcknowledgementEvent>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _is.Session session,
+                Map<String, dynamic> params,
+              ) async => (endpoints['routine'] as _ihcuaodq.RoutineEndpoint)
+                  .acknowledgeRoutine(
+                    session,
+                    params['ack'],
+                  ),
+        ),
+        'getRoutine': _is.MethodConnector(
+          name: 'getRoutine',
+          params: {
+            'routineId': _is.ParameterDescription(
+              name: 'routineId',
+              type: _is.getType<String>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _is.Session session,
+                Map<String, dynamic> params,
+              ) async => (endpoints['routine'] as _ihcuaodq.RoutineEndpoint)
+                  .getRoutine(
+                    session,
+                    params['routineId'],
+                  ),
+        ),
+        'streamRoutineDispatches': _is.MethodStreamConnector(
+          name: 'streamRoutineDispatches',
+          params: {
+            'deviceId': _is.ParameterDescription(
+              name: 'deviceId',
+              type: _is.getType<String>(),
+              nullable: false,
+            ),
+            'deviceToken': _is.ParameterDescription(
+              name: 'deviceToken',
+              type: _is.getType<String>(),
+              nullable: false,
+            ),
+          },
+          streamParams: {},
+          returnType: _is.MethodStreamReturnType.streamType,
+          call:
+              (
+                _is.Session session,
+                Map<String, dynamic> params,
+                Map<String, Stream> streamParams,
+              ) => (endpoints['routine'] as _ihcuaodq.RoutineEndpoint)
+                  .streamRoutineDispatches(
+                    session,
+                    deviceId: params['deviceId'],
+                    deviceToken: params['deviceToken'],
+                  ),
+        ),
+      },
+    );
     connectors['sync'] = _is.EndpointConnector(
       name: 'sync',
       endpoint: endpoints['sync']!,
@@ -437,6 +668,78 @@ class Endpoints extends _is.EndpointDispatch {
               ) => (endpoints['sync'] as _i609im4b.SyncEndpoint).streamInbox(
                 session,
               ),
+        ),
+      },
+    );
+    connectors['telemetry'] = _is.EndpointConnector(
+      name: 'telemetry',
+      endpoint: endpoints['telemetry']!,
+      methodConnectors: {
+        'update': _is.MethodConnector(
+          name: 'update',
+          params: {
+            'telemetry': _is.ParameterDescription(
+              name: 'telemetry',
+              type: _is.getType<_i375h7rk.DeviceTelemetry>(),
+              nullable: false,
+            ),
+            'deviceToken': _is.ParameterDescription(
+              name: 'deviceToken',
+              type: _is.getType<String>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _is.Session session,
+                Map<String, dynamic> params,
+              ) async => (endpoints['telemetry'] as _i34lh6ht.TelemetryEndpoint)
+                  .update(
+                    session,
+                    params['telemetry'],
+                    params['deviceToken'],
+                  ),
+        ),
+        'getLatest': _is.MethodConnector(
+          name: 'getLatest',
+          params: {
+            'deviceId': _is.ParameterDescription(
+              name: 'deviceId',
+              type: _is.getType<String>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _is.Session session,
+                Map<String, dynamic> params,
+              ) async => (endpoints['telemetry'] as _i34lh6ht.TelemetryEndpoint)
+                  .getLatest(
+                    session,
+                    params['deviceId'],
+                  ),
+        ),
+        'streamTelemetry': _is.MethodStreamConnector(
+          name: 'streamTelemetry',
+          params: {
+            'deviceId': _is.ParameterDescription(
+              name: 'deviceId',
+              type: _is.getType<String>(),
+              nullable: false,
+            ),
+          },
+          streamParams: {},
+          returnType: _is.MethodStreamReturnType.streamType,
+          call:
+              (
+                _is.Session session,
+                Map<String, dynamic> params,
+                Map<String, Stream> streamParams,
+              ) => (endpoints['telemetry'] as _i34lh6ht.TelemetryEndpoint)
+                  .streamTelemetry(
+                    session,
+                    params['deviceId'],
+                  ),
         ),
       },
     );

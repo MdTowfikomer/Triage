@@ -1,0 +1,5 @@
+class: DeviceRegistrationResponse
+fields:
+  deviceId: String
+  deviceToken: String
+  registeredAt: DateTime

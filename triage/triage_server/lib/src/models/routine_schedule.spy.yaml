@@ -1,0 +1,25 @@
+class: RoutineSchedule
+table: routine_schedules
+fields:
+  routineId: String
+  deviceId: String
+  userId: UuidValue, relation(parent=serverpod_auth_core_user, onDelete=Cascade)
+  name: String
+  scheduledTime: DateTime
+  stepsJson: String
+  status: String
+  createdAt: DateTime
+  dispatchedAt: DateTime?
+  completedAt: DateTime?
+  lastError: String?
+  lastOccurrenceId: String?
+indexes:
+  routine_schedule_routine_id_unique_idx:
+    fields: routineId
+    unique: true
+  routine_schedule_device_idx:
+    fields: deviceId
+  routine_schedule_status_idx:
+    fields: status
+  routine_schedule_user_idx:
+    fields: userId

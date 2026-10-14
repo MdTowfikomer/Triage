@@ -1,0 +1,10 @@
+class: VoiceCommandSyncEntry
+fields:
+  eventId: String
+  intent: String
+  actionTarget: String?
+  resultType: String
+  executionLatencyMs: int?
+  executedOffline: bool
+  timestamp: DateTime
+  transcript: String?

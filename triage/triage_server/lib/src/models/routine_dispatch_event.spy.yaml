@@ -1,0 +1,10 @@
+class: RoutineDispatchEvent
+fields:
+  routineOccurrenceId: String
+  routineId: String
+  deviceId: String
+  name: String
+  stepsJson: String
+  scheduledTime: DateTime
+  expiresAt: DateTime
+  dispatchedAt: DateTime

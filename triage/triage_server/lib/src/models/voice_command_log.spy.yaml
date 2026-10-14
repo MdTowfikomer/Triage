@@ -1,0 +1,18 @@
+class: VoiceCommandLog
+table: voice_command_logs
+fields:
+  eventId: String
+  deviceId: String
+  intent: String
+  actionTarget: String?
+  resultType: String
+  executionLatencyMs: int?
+  executedOffline: bool
+  syncedAt: DateTime
+  transcript: String?
+indexes:
+  voice_command_event_id_unique_idx:
+    fields: eventId
+    unique: true
+  voice_command_device_idx:
+    fields: deviceId

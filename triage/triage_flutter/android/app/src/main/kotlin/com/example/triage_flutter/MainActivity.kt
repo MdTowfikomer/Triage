@@ -1,4 +1,4 @@
-package com.example.triage_flutter
+package app.triage.mobile
 
 import android.graphics.Color
 import android.content.Intent
@@ -25,14 +25,31 @@ import kotlinx.coroutines.runBlocking
 import org.json.JSONObject
 
 class MainActivity : FlutterActivity() {
+    override fun dispatchKeyEvent(event: android.view.KeyEvent): Boolean {
+        if (event.keyCode == android.view.KeyEvent.KEYCODE_VOLUME_UP) {
+            AssistantTriggerGate.updateVolumeUp(event.action == android.view.KeyEvent.ACTION_DOWN, android.os.SystemClock.elapsedRealtime())
+        }
+        return super.dispatchKeyEvent(event)
+    }
     private val mainHandler = Handler(Looper.getMainLooper())
     private val voiceInitWaiters = mutableListOf<MethodChannel.Result>()
     private val voiceRequests = mutableMapOf<String, MethodChannel.Result>()
     private var voiceWebView: WebView? = null
     private var voicePageLoaded = false
+    private var offlineVoiceBridge: OfflineVoiceBridge? = null
+    private var nativeActionBridge: NativeActionBridge? = null
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
+        offlineVoiceBridge = OfflineVoiceBridge(this, flutterEngine.dartExecutor.binaryMessenger)
+        nativeActionBridge = NativeActionBridge(this, flutterEngine.dartExecutor.binaryMessenger)
+        LiveAudioBridge(flutterEngine.dartExecutor.binaryMessenger)
+        // Check if activity was launched by alarm trigger
+        intent?.let {
+            nativeActionBridge?.handleAlarmIntent(it)
+            nativeActionBridge?.handleBackgroundShakeIntent(it)
+        }
+        if (isBackgroundShakeEnabled()) startBackgroundShakeService()
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "triage.apps")
             .setMethodCallHandler { call, result ->
                 if (call.method != "launch") {
@@ -207,7 +224,80 @@ class MainActivity : FlutterActivity() {
         voiceInitWaiters.clear()
     }
 
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        nativeActionBridge?.handleAlarmIntent(intent)
+        nativeActionBridge?.handleBackgroundShakeIntent(intent)
+    }
+
+    @Deprecated("Deprecated in Android, retained for the system contact picker callback")
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        nativeActionBridge?.onActivityResult(requestCode, resultCode, data)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        AssistantTriggerGate.reset()
+        offlineVoiceBridge?.onPause()
+        nativeActionBridge?.onPause()
+        setActivityForeground(false)
+        if (isBackgroundShakeEnabled()) setBackgroundShakeSensorPaused(false)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        setActivityForeground(true)
+        nativeActionBridge?.onResume()
+        if (isBackgroundShakeEnabled()) setBackgroundShakeSensorPaused(true)
+    }
+
+    private fun setActivityForeground(foreground: Boolean) {
+        getSharedPreferences("triage_settings", MODE_PRIVATE)
+            .edit().putBoolean("activity_foreground", foreground).commit()
+    }
+
+    private fun isBackgroundShakeEnabled(): Boolean =
+        getSharedPreferences("triage_settings", MODE_PRIVATE)
+            .getBoolean("background_shake_enabled", false)
+
+    private fun startBackgroundShakeService() {
+        val serviceIntent = Intent(this, BackgroundShakeService::class.java).apply {
+            action = BackgroundShakeService.ACTION_START
+        }
+        try {
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                startForegroundService(serviceIntent)
+            } else {
+                startService(serviceIntent)
+            }
+        } catch (_: Exception) {
+            // The setting remains visible in Triage; the user can retry while the activity is open.
+        }
+    }
+
+    private fun setBackgroundShakeSensorPaused(paused: Boolean) {
+        try {
+            startService(Intent(this, BackgroundShakeService::class.java).apply {
+                action = if (paused) BackgroundShakeService.ACTION_PAUSE
+                else BackgroundShakeService.ACTION_RESUME
+            })
+        } catch (_: Exception) {
+            // Service lifecycle can race process recovery; next activity start retries it.
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        offlineVoiceBridge?.onStop()
+    }
+
     override fun onDestroy() {
+        offlineVoiceBridge?.onDestroy()
+        offlineVoiceBridge = null
+        nativeActionBridge?.onDestroy()
+        nativeActionBridge = null
         voiceRequests.values.forEach { it.error("voice_closed", "Voice engine was closed.", null) }
         voiceRequests.clear()
         voiceInitWaiters.forEach { it.error("voice_closed", "Voice engine was closed.", null) }

@@ -27,9 +27,17 @@ dependencies:
   timezone: ^0.11.0
   intl: ^0.20.2
   cupertino_icons: ^1.0.8
+  path: ^1.9.0
+  path_provider: ^2.1.5
+  sqlite3: ^3.3.1
+  sqlite3_flutter_libs: ^0.5.24
+  connectivity_plus: ^7.3.1
+  http: ^1.2.0
+  battery_plus: ^6.2.1
+  flutter_secure_storage: ^10.0.0
+  forui: ^0.26.0
 
 dev_dependencies:
-  http: ^1.6.0
   flutter_test:
     sdk: flutter
   flutter_lints: ^6.0.0

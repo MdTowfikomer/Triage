@@ -15,8 +15,11 @@ import 'dart:async' as _ida;
 import 'package:clock/clock.dart' as _io0w16m8;
 import 'package:serverpod/serverpod.dart' as _is;
 import '../future_calls/reminder_future_call.dart' as _iynbnlk2;
+import '../future_calls/routine_dispatcher_future_call.dart' as _iqrnioou;
 import 'future_calls_generated_models/reminder_future_call_fire_model.dart'
     as _i7w8akd3;
+import 'future_calls_generated_models/routine_dispatcher_future_call_fire_model.dart'
+    as _iopkff9l;
 
 /// Invokes a future call.
 typedef _InvokeFutureCall =
@@ -61,6 +64,7 @@ class FutureCalls extends _is.FutureCallDispatch<_FutureCallRef> {
   ) {
     var registeredFutureCalls = <String, _is.InvokableFutureCall>{
       'ReminderFireFutureCall': ReminderFireFutureCall(),
+      'RoutineDispatcherFireFutureCall': RoutineDispatcherFireFutureCall(),
     };
     _futureCallManager = futureCallManager;
     _serverId = serverId;
@@ -182,6 +186,10 @@ class _FutureCallRef {
   final _InvokeFutureCall _invokeFutureCall;
 
   late final reminder = _ReminderFutureCallDispatcher(_invokeFutureCall);
+
+  late final routineDispatcher = _RoutineDispatcherFutureCallDispatcher(
+    _invokeFutureCall,
+  );
 }
 
 class _ReminderFutureCallDispatcher {
@@ -193,6 +201,22 @@ class _ReminderFutureCallDispatcher {
     var object = _i7w8akd3.ReminderFutureCallFireModel(reminderId: reminderId);
     return _invokeFutureCall(
       'ReminderFireFutureCall',
+      object,
+    );
+  }
+}
+
+class _RoutineDispatcherFutureCallDispatcher {
+  _RoutineDispatcherFutureCallDispatcher(this._invokeFutureCall);
+
+  final _InvokeFutureCall _invokeFutureCall;
+
+  Future<void> fire(String routineId) {
+    var object = _iopkff9l.RoutineDispatcherFutureCallFireModel(
+      routineId: routineId,
+    );
+    return _invokeFutureCall(
+      'RoutineDispatcherFireFutureCall',
       object,
     );
   }
@@ -210,6 +234,26 @@ class ReminderFireFutureCall
       await _iynbnlk2.ReminderFutureCall().fire(
         session,
         object.reminderId,
+      );
+    }
+  }
+}
+
+class RoutineDispatcherFireFutureCall
+    extends _is.FutureCall<_iopkff9l.RoutineDispatcherFutureCallFireModel>
+    implements
+        _is.InvokableFutureCall<
+          _iopkff9l.RoutineDispatcherFutureCallFireModel
+        > {
+  @override
+  _ida.Future<void> invoke(
+    _is.Session session,
+    _iopkff9l.RoutineDispatcherFutureCallFireModel? object,
+  ) async {
+    if (object != null) {
+      await _iqrnioou.RoutineDispatcherFutureCall().fire(
+        session,
+        object.routineId,
       );
     }
   }

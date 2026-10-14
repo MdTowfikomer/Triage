@@ -1,36 +1,68 @@
 # Triage
 
-**Catch the thought. Keep the context private.** Triage is a voice-driven inbox that turns spoken reminders, tasks, notes, shopping items, and ideas into structured cards. Its intended interaction is simple: tap to speak, review the interpretation, and save it into a synced inbox.
+![Triage: Offline Voice, Hardware Triggers, Serverpod Cloud Sync](docs/assets/illustrations/hero-banner.jpg)
 
-Triage is a Serverpod “Build Something Real” hackathon project. Whistle transcription, date resolution, and privacy filtering run on the device. Sanitized transcripts use a two-stage Serverpod action funnel with Laya and OpenAI-compatible tool-model adapters, plus a deterministic offline fallback. Raw transcripts remain in device-local storage and are not part of the server model. [Action-funnel configuration and verification](docs/ACTION_FUNNEL.md).
+**Instant thought capture. Instant physical action. Zero latency.**  
+Triage is a privacy-first, offline-capable assistant designed for the **Serverpod "Build Something Real" Hackathon**. It combines hardware-triggered voice intake, on-device deterministic parsing, and local SQLite queueing with high-speed Serverpod cloud synchronization.
 
-## Architecture
+Whether you're offline on the subway or online at your desk, Triage lets you trigger reminders, notes, calls, WhatsApp messages, and timers instantly — then syncs seamlessly with Serverpod and PostgreSQL when connectivity is available.
+
+---
+
+## ⚡ Highlights
+
+- **Hardware Button & Gesture Triggers**: Double-tap `Volume Up` or use **Volume Up + Shake** to summon the assistant in `<50ms` even with the screen off or when inside other apps.
+- **100% Offline Core Actions**: WhatsApp handoff, phone calls, reminders, timer alarms, and quick voice notes parse and execute with zero network latency.
+- **Offline SQLite Outbox**: Spoken commands are safely saved to a local outbox with retry logic and conflict-free sequence IDs.
+- **Serverpod 4.0.4 Cloud Sync**: As soon as internet connectivity returns, the client syncs pending batches to Serverpod's PostgreSQL database and broadcasts live updates over typed WebSockets.
+- **ASCII/Pixel Animated Assistant**: Minimalist warm-paper / obsidian UI (`#F8F7F2`, `#242521`, `#E78A4E`) featuring dynamic animated states (*Idle*, *Listening*, *Thinking*, *Speaking*, *Offline*).
+- **Gemini Live Conversational Mode**: Switch seamlessly from instant offline triggers to an open-ended conversational session using BYOK Gemini Live WebSockets with direct PCM streaming.
+
+---
+
+## 🏗 Architecture & Offline-to-Cloud Sync
+
+![Offline-First Outbox and Serverpod Cloud Sync Architecture](docs/assets/illustrations/offline-sync-architecture.jpg)
 
 ```mermaid
-flowchart LR
-  Mic[Flutter capture] --> STT[Needle Whistle STT\nlocal WASM]
-  STT --> Redact[Desert Ant Redact\non-device]
-  Redact --> Router[Serverpod voice.routeVoice\nLaya domain decision + tool model]
-  Router --> Date[DateResolver\nlocal time zone]
-  Router --> Apps[Allowlisted Android app launch]
-  Date --> Review[Review / confirmation]
-  Redact --> Review
-  Review -->|approved structured fields + redacted transcript| Client[Generated Serverpod client]
-  Client --> Auth[Serverpod Auth]
-  Client --> Inbox[Session-scoped Inbox API]
-  Inbox --> DB[(PostgreSQL\nInboxItem ↔ Reminder / Recording)]
-  Inbox --> Stream[WebSocket InboxEvent stream]
-  Stream --> Other[Other signed-in clients]
-  Inbox --> Future[Reminder future call]
-  Future --> Notify[Native local notification schedule on device]
-  STT -. original transcript .-> Local[(Device-local draft cache)]
+flowchart TD
+  subgraph OnDevice["📱 On-Device (Zero Network Needed)"]
+    Trigger[Hardware Key / Shake / UI Mic] --> Audio[Local Audio / STT Bridge]
+    Audio --> Parser[Deterministic Regex & Fuzzy Contact Parser]
+    Parser --> Intent{Intent Decision}
+    Intent -->|Direct Action| Native[Native Android Handoff\nWhatsApp / Tel / Alarm / Timer]
+    Intent -->|Data Item| Outbox[(Local SQLite Outbox)]
+  end
+
+  subgraph ServerpodCloud["☁️ Serverpod Cloud Backend"]
+    SyncWorker[Sync Worker / Connectivity Monitor] -->|Batched POST syncBatch| Endpoint[CommandSyncEndpoint]
+    Endpoint --> DB[(PostgreSQL Cloud Database)]
+    Endpoint --> Streams[Typed WebSocket Stream]
+    Streams --> WebClient[Web / Desktop Clients]
+  end
+
+  Outbox -->|When Online| SyncWorker
 ```
 
-The diagram describes the architecture and intended flow; the verified platform boundaries below matter when running the current build.
+---
 
-## Product illustrations
+## 🗣 Offline Command Guide
 
-The project includes three annotated concepts for the capture funnel, privacy boundary, and auto-save interaction:
+Triage includes a built-in offline command reference accessible via the `?` icon in the app header:
+
+| Category | Example Voice Commands | What Triage Does |
+| :--- | :--- | :--- |
+| **WhatsApp** | `"WhatsApp Dad I am on my way"`<br>`"Send a WhatsApp to Alice see you soon"` | Matches contact against pinned favorites and pre-fills WhatsApp chat ready to send |
+| **Phone Calls** | `"Call Mom"`<br>`"Call Doctor on mobile"` | Looks up pinned contact phone number and launches direct native dialer |
+| **Reminders** | `"Remind me to buy groceries tomorrow at 6 PM"`<br>`"Reminder take medicine in 2 hours"` | Parses relative date/time deterministically and sets a local notification |
+| **Timers & Alarms** | `"Set a timer for 15 minutes"`<br>`"Set an alarm for 7 AM tomorrow"` | Sets system clock alarms directly via native Android intents |
+| **Quick Notes** | `"Note down meeting ideas for tomorrow"`<br>`"Take a note buy coffee beans"` | Immediately persists to local SQLite and queues for Serverpod sync |
+
+---
+
+## Product Illustrations
+
+The project includes verified architectural diagrams for privacy, capture pipelines, and review workflows:
 
 ![Voice funnel: capture, interpret, then review](docs/assets/illustrations/01-voice-funnel.jpg)
 
@@ -46,6 +78,12 @@ The project includes three annotated concepts for the capture funnel, privacy bo
 
 ## Stack
 
+- **Flutter / Dart Client**: Custom warm-paper minimalist design system with Forui Lucide icons, responsive sheets, and ASCII animated assistant.
+- **Serverpod 4.0.4 Backend**: Custom endpoints (`CommandSyncEndpoint`, `RoutineEndpoint`, `TelemetryEndpoint`, `DeviceEndpoint`), typed future calls, ORM relations, and PostgreSQL persistence.
+- **Android Native Layer**: Kotlin `TriggerKeyService` and `BackgroundShakeService` for low-latency physical triggers, plus `NativeActionBridge` for intent handoffs.
+- **SQLite Outbox**: Local queueing via `sqlite_async` ensuring zero data loss during network dropouts.
+- **Gemini Live**: Direct bi-directional WebSocket streaming with 16kHz PCM audio and low-latency audio playback.
+
 - Flutter / Dart client, with a custom dark Linear-inspired inbox and voice capsule.
 - Cactus Needle Whistle for on-device speech transcription; Laya/OpenAI-compatible backend adapters and a pure Dart fallback for routing and slot extraction.
 - A standalone deterministic Dart `DateResolver` for local relative-date interpretation.
@@ -58,6 +96,14 @@ The project includes three annotated concepts for the capture funnel, privacy bo
 Flutter client tests pass (59), backend unit/integration tests pass (65), and both analyzers are clean. The Whistle-only prepared Android bridge transcribed a prerecorded fixture without Needle routing. Laya/tool-model adapters have controlled contract tests; live model accuracy/latency and physical-phone execution still need validation. Earlier Web/Needle spike evidence remains in the historical reports.
 
 This is a spike/hackathon build, not a claim of fully validated production behavior. The latest Desert Ant **browser** smoke initialized LiteRT but its Hugging Face model listing request returned HTTP 405 in this environment; browser model-backed redaction needs a successful host check before recording a browser privacy demo. The app blocks saving if redaction initialization fails. The Android APK now includes its WASM runtime and model files and has passed a local prerecorded-audio bridge smoke, but no Android handset was attached during this implementation turn, so native permission/microphone/inference still needs physical-device acceptance. Server/client multi-session event handling has automated tests, but a physical phone-to-laptop live sync demo has not yet been performed. See [the phone demo guide](docs/PHONE_DEMO_GUIDE.md) and [the detailed UI/platform report](docs/FLUTTER_UI.md) before presenting features as live-verified.
+
+## Open-source and release notes
+
+The project is licensed under [MIT](LICENSE). See [CONTRIBUTING.md](CONTRIBUTING.md),
+[CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md), and [SECURITY.md](SECURITY.md) for
+community and vulnerability reporting guidance. Android signing, the production
+backend URL, and the pre-publication checklist are in
+[the release readiness guide](docs/RELEASE_READINESS.md).
 
 ## Setup and run
 

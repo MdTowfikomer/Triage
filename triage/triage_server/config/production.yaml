@@ -7,7 +7,7 @@
 # Configuration for the main API server.
 apiServer:
   port: 8080
-  publicHost: api.examplepod.com
+  publicHost: triage.api.serverpod.space
   publicPort: 443
   publicScheme: https
 

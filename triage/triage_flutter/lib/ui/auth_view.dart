@@ -25,8 +25,8 @@ class _AuthViewState extends State<AuthView> {
   String _error = '';
   bool _busy = false, _hidden = true;
   String get _title => switch (_flow) {
-    AuthFlow.login => 'A little less on your mind.',
-    AuthFlow.signup => 'Make room for your thoughts.',
+    AuthFlow.login => 'Sync when you want to.',
+    AuthFlow.signup => 'Create your Triage account.',
     AuthFlow.verify => 'Check your email.',
     AuthFlow.reset => 'Reset your password.',
     AuthFlow.resetVerify => 'Choose a new password.',
@@ -65,6 +65,9 @@ class _AuthViewState extends State<AuthView> {
             password: _password.text,
           );
           await widget.client.auth.updateSignedInUser(auth);
+          if (mounted && Navigator.of(context).canPop()) {
+            Navigator.of(context).pop();
+          }
         case AuthFlow.signup:
           _request = await widget.client.emailIdp.startRegistration(
             email: email,
@@ -80,6 +83,9 @@ class _AuthViewState extends State<AuthView> {
             password: _password.text,
           );
           await widget.client.auth.updateSignedInUser(auth);
+          if (mounted && Navigator.of(context).canPop()) {
+            Navigator.of(context).pop();
+          }
         case AuthFlow.reset:
           _request = await widget.client.emailIdp.startPasswordReset(
             email: email,
@@ -163,7 +169,7 @@ class _AuthViewState extends State<AuthView> {
                       Text(
                         verifying
                             ? 'Enter the verification code sent to ${_email.text.trim()}.'
-                            : 'Tasks, notes, and the things you don’t want to forget.',
+                            : 'Your voice actions stay on your phone. Sign in to sync approved activity to Serverpod.',
                         style: const TextStyle(
                           color: TriageColors.muted,
                           fontSize: 14,

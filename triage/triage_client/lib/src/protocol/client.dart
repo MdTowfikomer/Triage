@@ -17,9 +17,23 @@ import 'package:serverpod_auth_core_client/serverpod_auth_core_client.dart'
 import 'package:serverpod_auth_idp_client/serverpod_auth_idp_client.dart'
     as _iaic;
 import 'package:serverpod_client/serverpod_client.dart' as _isc;
+import 'package:triage_client/src/protocol/device_registration_response.dart'
+    as _i8krk7ig;
+import 'package:triage_client/src/protocol/device_telemetry.dart' as _io3025lv;
 import 'package:triage_client/src/protocol/inbox_event.dart' as _i0lnl91c;
 import 'package:triage_client/src/protocol/inbox_item.dart' as _iadxe3ww;
+import 'package:triage_client/src/protocol/routine_acknowledgement_event.dart'
+    as _iwkt1xyi;
+import 'package:triage_client/src/protocol/routine_dispatch_event.dart'
+    as _il6f6egr;
+import 'package:triage_client/src/protocol/routine_schedule.dart' as _ixc37922;
+import 'package:triage_client/src/protocol/routine_schedule_response.dart'
+    as _iif2lpli;
 import 'package:triage_client/src/protocol/voice_action.dart' as _iqzsze1b;
+import 'package:triage_client/src/protocol/voice_command_sync_batch.dart'
+    as _iygta9x6;
+import 'package:triage_client/src/protocol/voice_command_sync_result.dart'
+    as _if07coft;
 import 'protocol.dart' as _il2as5qe;
 
 /// By extending [EmailIdpBaseEndpoint], the email identity provider endpoints
@@ -248,6 +262,63 @@ class EndpointJwtRefresh extends _iacc.EndpointRefreshJwtTokens {
 }
 
 /// {@category Endpoint}
+class EndpointCommandSync extends _isc.EndpointRef {
+  EndpointCommandSync(_isc.EndpointCaller caller) : super(caller);
+
+  @override
+  String get name => 'commandSync';
+
+  /// Synchronizes a batch of offline voice command records to PostgreSQL idempotently.
+  /// Validates authenticated user session, scoped device auth token, and deduplicates entries by eventId.
+  _ida.Future<_if07coft.VoiceCommandSyncResult> syncBatch(
+    _iygta9x6.VoiceCommandSyncBatch batch,
+  ) => caller.callServerEndpoint<_if07coft.VoiceCommandSyncResult>(
+    'commandSync',
+    'syncBatch',
+    {'batch': batch},
+  );
+}
+
+/// {@category Endpoint}
+class EndpointDevAuth extends _isc.EndpointRef {
+  EndpointDevAuth(_isc.EndpointCaller caller) : super(caller);
+
+  @override
+  String get name => 'devAuth';
+
+  /// Issues a valid, verified authentication session for the development pilot account.
+  /// Strictly restricted to local development and test environments.
+  _ida.Future<_iacc.AuthSuccess> authenticatePilotUser({
+    required String email,
+  }) => caller.callServerEndpoint<_iacc.AuthSuccess>(
+    'devAuth',
+    'authenticatePilotUser',
+    {'email': email},
+  );
+}
+
+/// {@category Endpoint}
+class EndpointDevice extends _isc.EndpointRef {
+  EndpointDevice(_isc.EndpointCaller caller) : super(caller);
+
+  @override
+  String get name => 'device';
+
+  /// Binds device identity to authenticated user ownership, returning a scoped device auth token.
+  _ida.Future<_i8krk7ig.DeviceRegistrationResponse> registerDevice(
+    String deviceId, {
+    String? deviceName,
+  }) => caller.callServerEndpoint<_i8krk7ig.DeviceRegistrationResponse>(
+    'device',
+    'registerDevice',
+    {
+      'deviceId': deviceId,
+      'deviceName': deviceName,
+    },
+  );
+}
+
+/// {@category Endpoint}
 class EndpointInbox extends _isc.EndpointRef {
   EndpointInbox(_isc.EndpointCaller caller) : super(caller);
 
@@ -318,6 +389,69 @@ class EndpointInbox extends _isc.EndpointRef {
 }
 
 /// {@category Endpoint}
+class EndpointRoutine extends _isc.EndpointRef {
+  EndpointRoutine(_isc.EndpointCaller caller) : super(caller);
+
+  @override
+  String get name => 'routine';
+
+  /// Schedules a routine for an authenticated user on a registered device.
+  _ida.Future<_iif2lpli.RoutineScheduleResponse> scheduleRoutine({
+    required String deviceId,
+    required String name,
+    required DateTime scheduledTime,
+    required String stepsJson,
+  }) => caller.callServerEndpoint<_iif2lpli.RoutineScheduleResponse>(
+    'routine',
+    'scheduleRoutine',
+    {
+      'deviceId': deviceId,
+      'name': name,
+      'scheduledTime': scheduledTime,
+      'stepsJson': stepsJson,
+    },
+  );
+
+  /// Connects device WebSocket to real-time routine dispatch messages.
+  /// Requires authenticated session and matching device credentials.
+  _ida.Stream<_il6f6egr.RoutineDispatchEvent> streamRoutineDispatches({
+    required String deviceId,
+    required String deviceToken,
+  }) =>
+      caller.callStreamingServerEndpoint<
+        _ida.Stream<_il6f6egr.RoutineDispatchEvent>,
+        _il6f6egr.RoutineDispatchEvent
+      >(
+        'routine',
+        'streamRoutineDispatches',
+        {
+          'deviceId': deviceId,
+          'deviceToken': deviceToken,
+        },
+        {},
+      );
+
+  /// Dispatches execution acknowledgement back to Serverpod with per-step outcomes.
+  /// Requires authenticated session, device ownership, occurrence verification, and valid state transitions.
+  _ida.Future<bool> acknowledgeRoutine(
+    _iwkt1xyi.RoutineAcknowledgementEvent ack,
+  ) => caller.callServerEndpoint<bool>(
+    'routine',
+    'acknowledgeRoutine',
+    {'ack': ack},
+  );
+
+  /// Queries status of a routine (for verification and UI state tracking).
+  /// Strictly checks ownership so callers cannot inspect other users' routines.
+  _ida.Future<_ixc37922.RoutineSchedule?> getRoutine(String routineId) =>
+      caller.callServerEndpoint<_ixc37922.RoutineSchedule?>(
+        'routine',
+        'getRoutine',
+        {'routineId': routineId},
+      );
+}
+
+/// {@category Endpoint}
 class EndpointSync extends _isc.EndpointRef {
   EndpointSync(_isc.EndpointCaller caller) : super(caller);
 
@@ -332,6 +466,49 @@ class EndpointSync extends _isc.EndpointRef {
         'sync',
         'streamInbox',
         {},
+        {},
+      );
+}
+
+/// {@category Endpoint}
+class EndpointTelemetry extends _isc.EndpointRef {
+  EndpointTelemetry(_isc.EndpointCaller caller) : super(caller);
+
+  @override
+  String get name => 'telemetry';
+
+  /// Pushes latest device telemetry snapshot to PostgreSQL.
+  /// Validates user ownership and device token, updates or inserts the record,
+  /// and broadcasts the update to real-time subscribers over WebSockets.
+  _ida.Future<_io3025lv.DeviceTelemetry> update(
+    _io3025lv.DeviceTelemetry telemetry,
+    String deviceToken,
+  ) => caller.callServerEndpoint<_io3025lv.DeviceTelemetry>(
+    'telemetry',
+    'update',
+    {
+      'telemetry': telemetry,
+      'deviceToken': deviceToken,
+    },
+  );
+
+  /// Gets the latest telemetry record for a registered device owned by the authenticated user.
+  _ida.Future<_io3025lv.DeviceTelemetry?> getLatest(String deviceId) =>
+      caller.callServerEndpoint<_io3025lv.DeviceTelemetry?>(
+        'telemetry',
+        'getLatest',
+        {'deviceId': deviceId},
+      );
+
+  /// Real-time stream of telemetry events for a specific device.
+  _ida.Stream<_io3025lv.DeviceTelemetry> streamTelemetry(String deviceId) =>
+      caller.callStreamingServerEndpoint<
+        _ida.Stream<_io3025lv.DeviceTelemetry>,
+        _io3025lv.DeviceTelemetry
+      >(
+        'telemetry',
+        'streamTelemetry',
+        {'deviceId': deviceId},
         {},
       );
 }
@@ -393,8 +570,13 @@ class Client extends _isc.ServerpodClientShared {
        ) {
     emailIdp = EndpointEmailIdp(this);
     jwtRefresh = EndpointJwtRefresh(this);
+    commandSync = EndpointCommandSync(this);
+    devAuth = EndpointDevAuth(this);
+    device = EndpointDevice(this);
     inbox = EndpointInbox(this);
+    routine = EndpointRoutine(this);
     sync = EndpointSync(this);
+    telemetry = EndpointTelemetry(this);
     voice = EndpointVoice(this);
     modules = Modules(this);
   }
@@ -403,9 +585,19 @@ class Client extends _isc.ServerpodClientShared {
 
   late final EndpointJwtRefresh jwtRefresh;
 
+  late final EndpointCommandSync commandSync;
+
+  late final EndpointDevAuth devAuth;
+
+  late final EndpointDevice device;
+
   late final EndpointInbox inbox;
 
+  late final EndpointRoutine routine;
+
   late final EndpointSync sync;
+
+  late final EndpointTelemetry telemetry;
 
   late final EndpointVoice voice;
 
@@ -415,8 +607,13 @@ class Client extends _isc.ServerpodClientShared {
   Map<String, _isc.EndpointRef> get endpointRefLookup => {
     'emailIdp': emailIdp,
     'jwtRefresh': jwtRefresh,
+    'commandSync': commandSync,
+    'devAuth': devAuth,
+    'device': device,
     'inbox': inbox,
+    'routine': routine,
     'sync': sync,
+    'telemetry': telemetry,
     'voice': voice,
   };
 

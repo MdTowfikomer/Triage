@@ -1,0 +1,8 @@
+class: RoutineStepOutcome
+fields:
+  stepId: String
+  action: String
+  status: String
+  latencyMs: int
+  errorMessage: String?
+  actualValue: String?

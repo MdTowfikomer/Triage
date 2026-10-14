@@ -1,0 +1,5 @@
+class: RoutineScheduleResponse
+fields:
+  routineId: String
+  status: String
+  scheduledTime: DateTime
