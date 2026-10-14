@@ -8,6 +8,7 @@ import '../outbox/outbox_event.dart';
 import '../outbox/uuid_util.dart';
 import '../parser/deterministic_action_parser.dart';
 import '../contacts/favorite_contacts_repository.dart';
+import '../actions/favorite_apps_repository.dart';
 import '../notes/local_notes_repository.dart';
 
 /// Structured outcome of a complete offline assistant execution cycle.
@@ -64,6 +65,7 @@ class OfflineAssistantController {
   final NativeActionClient actionClient;
   final LocalOutboxRepository outboxRepository;
   final FavoriteContactsRepository? favoriteContacts;
+  final FavoriteAppsRepository? favoriteApps;
   final LocalNotesRepository? notesRepository;
 
   OfflineAssistantController({
@@ -71,6 +73,7 @@ class OfflineAssistantController {
     required this.actionClient,
     required this.outboxRepository,
     this.favoriteContacts,
+    this.favoriteApps,
     this.notesRepository,
   });
 
@@ -349,8 +352,8 @@ class OfflineAssistantController {
         );
         break;
       case ActionType.openApp:
-        final appName = intent.appName ?? 'camera';
-        if ((appName == 'torch_on' || appName == 'torch_off') &&
+        final rawAppName = intent.appName ?? 'camera';
+        if ((rawAppName == 'torch_on' || rawAppName == 'torch_off') &&
             !(await Permission.camera.request()).isGranted) {
           actionResult = const ActionResult(
             status: ActionStatus.permissionRequired,
@@ -360,7 +363,10 @@ class OfflineAssistantController {
             errorMessage: 'Allow camera access to use the flashlight.',
           );
         } else {
-          actionResult = await actionClient.openApp(appName);
+          // Check favorite apps for exact or alias package mapping first
+          final pinned = favoriteApps?.resolve(rawAppName);
+          final appToLaunch = pinned?.packageName ?? rawAppName;
+          actionResult = await actionClient.openApp(appToLaunch);
         }
         break;
       case ActionType.media:

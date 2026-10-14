@@ -638,6 +638,39 @@ class NativeActionBridge(
                             break
                         }
                     }
+
+                    // Dynamic fallback: Query all launcher apps on the phone matching target label or package
+                    if (launchIntent == null && normalizedTarget.isNotEmpty()) {
+                        val launcherIntent = Intent(Intent.ACTION_MAIN, null).apply {
+                            addCategory(Intent.CATEGORY_LAUNCHER)
+                        }
+                        val apps = packageManager.queryIntentActivities(launcherIntent, 0)
+                        
+                        // 1. Exact match on app label or package
+                        var bestMatch = apps.firstOrNull { info ->
+                            val label = info.loadLabel(packageManager).toString().trim().lowercase()
+                            val pkg = info.activityInfo.packageName.lowercase()
+                            label == normalizedTarget || pkg == normalizedTarget
+                        }
+
+                        // 2. Contains match
+                        if (bestMatch == null) {
+                            bestMatch = apps.firstOrNull { info ->
+                                val label = info.loadLabel(packageManager).toString().trim().lowercase()
+                                val pkg = info.activityInfo.packageName.lowercase()
+                                label.contains(normalizedTarget) || normalizedTarget.contains(label) || pkg.contains(normalizedTarget)
+                            }
+                        }
+
+                        if (bestMatch != null) {
+                            val pkg = bestMatch.activityInfo.packageName
+                            launchIntent = packageManager.getLaunchIntentForPackage(pkg)
+                            if (launchIntent != null) {
+                                resolvedPackage = pkg
+                            }
+                        }
+                    }
+
                     launchIntent?.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 }
 

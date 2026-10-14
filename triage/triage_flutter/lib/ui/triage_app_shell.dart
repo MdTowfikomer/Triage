@@ -19,8 +19,10 @@ import 'components/byok_card.dart';
 import 'offline_voice_spike_screen.dart';
 import 'auth_view.dart';
 import 'favorite_contacts_page.dart';
+import 'favorite_apps_page.dart';
 import 'notes_page.dart';
 import '../notes/local_notes_repository.dart';
+import '../actions/favorite_apps_repository.dart';
 import 'components/assistant_overlay_sheet.dart';
 import 'components/command_guide_modal.dart';
 import 'voice_session_page.dart';
@@ -49,6 +51,7 @@ class _TriageAppShellState extends State<TriageAppShell> {
   late final OfflineAssistantController _assistantController;
   late final ByokKeyStore _byokKeyStore;
   late final FavoriteContactsRepository _favoriteContacts;
+  late final FavoriteAppsRepository _favoriteApps;
   late final ByokGateway _byokGateway;
   late final SharedPreferences _preferences;
   OutboxSyncManager? _syncManager;
@@ -95,12 +98,14 @@ class _TriageAppShellState extends State<TriageAppShell> {
     _backgroundShakeEnabled =
         prefs.getBool('background_shake_enabled') ?? false;
     _favoriteContacts = FavoriteContactsRepository(prefs);
+    _favoriteApps = FavoriteAppsRepository(prefs);
 
     _assistantController = OfflineAssistantController(
       voiceClient: _client,
       actionClient: _actionClient,
       outboxRepository: _outboxRepo,
       favoriteContacts: _favoriteContacts,
+      favoriteApps: _favoriteApps,
       notesRepository: _notesRepo,
     );
     _syncManager = OutboxSyncManager(
@@ -892,6 +897,45 @@ class _TriageAppShellState extends State<TriageAppShell> {
                   onPressed: _openFavoriteContacts,
                   icon: const Icon(Icons.people_outline_rounded),
                   label: const Text('Manage contacts'),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 14),
+          Container(
+            padding: const EdgeInsets.all(18),
+            decoration: BoxDecoration(
+              color: const Color(0xFFFFFFFF),
+              borderRadius: BorderRadius.circular(18),
+              border: Border.all(color: const Color(0xFFE9E8E2)),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Pinned Favorite Apps & Voice Aliases',
+                  style: TextStyle(
+                    color: Color(0xFF242521),
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                const SizedBox(height: 6),
+                const Text(
+                  'Triage can launch any app. Pin favorites here to assign quick voice aliases.',
+                  style: TextStyle(color: Color(0xFF777971), fontSize: 13),
+                ),
+                const SizedBox(height: 12),
+                OutlinedButton.icon(
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute<void>(
+                        builder: (_) => FavoriteAppsPage(repository: _favoriteApps),
+                      ),
+                    );
+                  },
+                  icon: const Icon(Icons.apps_rounded),
+                  label: const Text('Manage favorite apps'),
                 ),
               ],
             ),
