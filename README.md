@@ -26,19 +26,19 @@ Whether you're offline on the subway or online at your desk, Triage lets you tri
 
 ```mermaid
 flowchart TD
-  subgraph OnDevice["📱 On-Device (Zero Network Needed)"]
-    Trigger[Hardware Key / Shake / UI Mic] --> Audio[Local Audio / STT Bridge]
-    Audio --> Parser[Deterministic Regex & Fuzzy Contact Parser]
-    Parser --> Intent{Intent Decision}
-    Intent -->|Direct Action| Native[Native Android Handoff\nWhatsApp / Tel / Alarm / Timer]
-    Intent -->|Data Item| Outbox[(Local SQLite Outbox)]
+  subgraph OnDevice["On-Device: Zero Network Needed"]
+    Trigger["Hardware Key / Shake / UI Mic"] --> Audio["Local Audio / STT Bridge"]
+    Audio --> Parser["Deterministic Regex & Fuzzy Contact Parser"]
+    Parser --> Intent{"Intent Decision"}
+    Intent -->|Direct Action| Native["Native Android Handoff<br/>WhatsApp / Tel / Alarm / Timer"]
+    Intent -->|Data Item| Outbox[("Local SQLite Outbox")]
   end
 
-  subgraph ServerpodCloud["☁️ Serverpod Cloud Backend"]
-    SyncWorker[Sync Worker / Connectivity Monitor] -->|Batched POST syncBatch| Endpoint[CommandSyncEndpoint]
-    Endpoint --> DB[(PostgreSQL Cloud Database)]
-    Endpoint --> Streams[Typed WebSocket Stream]
-    Streams --> WebClient[Web / Desktop Clients]
+  subgraph ServerpodCloud["Serverpod Cloud Backend"]
+    SyncWorker["Sync Worker / Connectivity Monitor"] -->|Batched POST syncBatch| Endpoint["CommandSyncEndpoint"]
+    Endpoint --> DB[("PostgreSQL Cloud Database")]
+    Endpoint --> Streams["Typed WebSocket Stream"]
+    Streams --> WebClient["Web / Desktop Clients"]
   end
 
   Outbox -->|When Online| SyncWorker
